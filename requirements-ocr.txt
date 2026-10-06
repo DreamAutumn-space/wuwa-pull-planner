@@ -1,0 +1,7 @@
+# Offline OCR pipeline used by scripts/reparse_dps.py.
+# RapidOCR 3.x is required; rapidocr-onnxruntime 1.x does not support Python 3.13.
+rapidocr>=3,<4
+onnxruntime>=1.30,<2
+opencv-python>=4.10,<6
+numpy>=2,<3
+Pillow>=11,<13

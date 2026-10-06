@@ -1,0 +1,742 @@
+{
+  "version": "3.7-catalog-2026-10-06",
+  "note": "角色名称与新增限定五星根据官方3.7及历次版本公告核对；提供完整已公布目录，不将本期卡池作为抽卡候选限制。四星默认拥有6链，不展示为可编辑的资产行。",
+  "characters": [
+    {
+      "character": "千咲",
+      "signature_weapon": "昙切",
+      "source": "https://wuthering.gg/zh-Hans/characters/chisa",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "琳奈",
+      "signature_weapon": "溢彩荧辉",
+      "source": "https://wuthering.gg/zh-Hans/characters/lynae",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "弗洛洛",
+      "signature_weapon": "幽冥的忘忧章",
+      "source": "https://wuthering.gg/zh-Hans/characters/phrolova",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "菲比",
+      "signature_weapon": "和光回唱",
+      "source": "https://wuthering.gg/zh-Hans/characters/phoebe",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "守岸人",
+      "signature_weapon": "星序协响",
+      "source": "https://wuthering.gg/zh-Hans/characters/shorekeeper",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "夏空",
+      "signature_weapon": "林间的咏叹调",
+      "source": "https://wuthering.gg/zh-Hans/characters/ciaccona",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "卡提希娅",
+      "signature_weapon": "不屈命定之冠",
+      "source": "https://wuthering.gg/zh-Hans/characters/cartethyia",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "布兰特",
+      "signature_weapon": "不灭航路",
+      "source": "https://wuthering.gg/zh-Hans/characters/brant",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "忌炎",
+      "signature_weapon": "苍鳞千嶂",
+      "source": "https://wuthering.gg/zh-Hans/characters/jiyan",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "坎特蕾拉",
+      "signature_weapon": "海的呢喃",
+      "source": "https://wuthering.gg/zh-Hans/characters/cantarella",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "莫宁",
+      "signature_weapon": "宙算仪轨",
+      "source": "https://wuthering.gg/zh-Hans/characters/mornye",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "赞妮",
+      "signature_weapon": "焰光裁定",
+      "source": "https://wuthering.gg/zh-Hans/characters/zani",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "长离",
+      "signature_weapon": "赫奕流明",
+      "source": "https://wuthering.gg/zh-Hans/characters/changli",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "珂莱塔",
+      "signature_weapon": "死与舞",
+      "source": "https://wuthering.gg/zh-Hans/characters/carlotta",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "今汐",
+      "signature_weapon": "时和岁稔",
+      "source": "https://wuthering.gg/zh-Hans/characters/jinhsi",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "相里要",
+      "signature_weapon": "诸方玄枢",
+      "source": "https://wuthering.gg/zh-Hans/characters/xiangli-yao",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "椿",
+      "signature_weapon": "裁春",
+      "source": "https://wuthering.gg/zh-Hans/characters/camellya",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "折枝",
+      "signature_weapon": "琼枝冰绡",
+      "source": "https://wuthering.gg/zh-Hans/characters/zhezhi",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "吟霖",
+      "signature_weapon": "掣傀之手",
+      "source": "https://wuthering.gg/zh-Hans/characters/yinlin",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "露帕",
+      "signature_weapon": "焰痕",
+      "source": "https://wuthering.gg/zh-Hans/characters/lupa",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "洛可可",
+      "signature_weapon": "悲喜剧",
+      "source": "https://wuthering.gg/zh-Hans/characters/roccia",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "仇远",
+      "signature_weapon": "裁竹",
+      "source": "https://wuthering.gg/zh-Hans/characters/qiuyuan",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "奥古斯塔",
+      "signature_weapon": "驭冕铸雷之权",
+      "source": "https://wuthering.gg/zh-Hans/characters/augusta",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "尤诺",
+      "signature_weapon": "万物持存的注释",
+      "source": "https://wuthering.gg/zh-Hans/characters/iuno",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "嘉贝莉娜",
+      "signature_weapon": "光影双生",
+      "source": "https://wuthering.gg/zh-Hans/characters/galbrena",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "绯雪",
+      "signature_weapon": "灼霜",
+      "source": "https://wuthering.gg/zh-Hans/characters/hiyuki",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "洛瑟菈",
+      "signature_weapon": "存帧",
+      "source": "https://wuthering.gg/zh-Hans/characters/lucilla",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "爱弥斯",
+      "signature_weapon": "永远的启明星",
+      "source": "https://wuthering.gg/zh-Hans/characters/aemeath",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "达妮娅",
+      "signature_weapon": "赝作的矮星",
+      "source": "https://wuthering.gg/zh-Hans/characters/denia",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "西格莉卡",
+      "signature_weapon": "昭日译注",
+      "source": "https://wuthering.gg/zh-Hans/characters/sigrika",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "维里奈",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "鉴心",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "卡卡罗",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "安可",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "凌阳",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "秧秧",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "白芷",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "炽霞",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "散华",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "秋水",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "丹瑾",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "莫特斐",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "渊武",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "桃祈",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "釉瑚",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "灯灯",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "卜灵",
+      "status": "no_dedicated_signature",
+      "rarity": 4,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "漂泊者",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "漂泊者·衍射",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": [
+        "漂泊者衍射"
+      ]
+    },
+    {
+      "character": "漂泊者·湮灭",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": [
+        "漂泊者湮灭"
+      ]
+    },
+    {
+      "character": "漂泊者·气动",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": [
+        "漂泊者气动"
+      ]
+    },
+    {
+      "character": "漂泊者·导电",
+      "status": "no_dedicated_signature",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": [
+        "漂泊者导电"
+      ]
+    },
+    {
+      "character": "示例主C甲",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例主C乙",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例主C丙",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例主C丁",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例副C甲",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例副C乙",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例副C丙",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例副C丁",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例奶位甲",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "示例奶位乙",
+      "signature_weapon": "示例武器",
+      "status": "demo_only",
+      "rarity": 5,
+      "is_limited": false,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "穗穗",
+      "signature_weapon": "栖霞饮露",
+      "source": "https://wuthering.gg/zh-Hans/characters/suisui",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5480",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true,
+      "release_status": "released",
+      "aliases": []
+    },
+    {
+      "character": "陆·赫斯",
+      "signature_weapon": "白昼之脊",
+      "aliases": [
+        "陆赫斯",
+        "陆·赫斯",
+        "陆・赫斯"
+      ],
+      "version_introduced": "3.1",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "露西",
+      "signature_weapon": "蜃影",
+      "aliases": [],
+      "version_introduced": "3.4",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "丽贝卡",
+      "signature_weapon": "碎骨",
+      "aliases": [
+        "蕾贝卡",
+        "蕾貝卡",
+        "Rebecca"
+      ],
+      "version_introduced": "3.4",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "秧秧·玄翎",
+      "signature_weapon": "天之苍苍",
+      "aliases": [
+        "玄翎",
+        "秧秧玄翎",
+        "秧秧・玄翎"
+      ],
+      "version_introduced": "3.5",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5480",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5480",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "景燃",
+      "signature_weapon": "千般渡",
+      "aliases": [],
+      "version_introduced": "3.6",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5340",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5340",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "清宵",
+      "signature_weapon": "云琅",
+      "aliases": [],
+      "version_introduced": "3.6",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5340",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5340",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "心",
+      "signature_weapon": "玉阙玄华",
+      "aliases": [
+        "心月狐"
+      ],
+      "version_introduced": "3.7",
+      "release_status": "released",
+      "official_source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5528",
+      "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5528",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    },
+    {
+      "character": "锁暝",
+      "signature_weapon": "沉冥",
+      "aliases": [],
+      "version_introduced": "3.7",
+      "release_status": "upcoming",
+      "official_source": "https://mc.kurogames.com/main/news/detail/5569",
+      "source": "https://mc.kurogames.com/main/news/detail/5569",
+      "status": "verified",
+      "rarity": 5,
+      "is_limited": true
+    }
+  ],
+  "as_of": "2026-10-06",
+  "game_version": "3.7",
+  "four_star_policy": {
+    "characters": [
+      "秧秧",
+      "白芷",
+      "炽霞",
+      "丹瑾",
+      "莫特斐",
+      "桃祈",
+      "渊武",
+      "散华",
+      "秋水",
+      "釉瑚",
+      "灯灯",
+      "卜灵"
+    ],
+    "owned": true,
+    "chain": 6
+  },
+  "current_up": {
+    "characters": [
+      "心",
+      "千咲",
+      "尤诺"
+    ],
+    "starts_at": null,
+    "ends_at": "2026-10-22T09:59:00+08:00",
+    "timezone": "Asia/Shanghai",
+    "source": "https://wutheringwaves.kurogames.com/zh-tw/main/news/detail/5528",
+    "phase": "3.7第一期",
+    "start_condition": "3.7版本更新后"
+  },
+  "upcoming_up": {
+    "characters": [
+      "锁暝"
+    ],
+    "starts_at": null,
+    "note": "角色已公布，第二期具体活动时间尚未公布；不按版本周期推算。",
+    "source": "https://mc.kurogames.com/main/news/detail/5569"
+  }
+}

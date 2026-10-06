@@ -1,0 +1,1175 @@
+{
+  "schema_version": 1,
+  "crop_policy": {
+    "method": "lossless source-pixel crop",
+    "face_crop_size": {
+      "width": 160,
+      "height": 135
+    },
+    "description": "Face/upper-portrait crop excludes the top-left attribute marker, bottom name panel, and lower-right lock marker area."
+  },
+  "sources": [
+    {
+      "source_index": 0,
+      "pixel_size": {
+        "width": 813,
+        "height": 1576
+      },
+      "sha256": "29d3401c534e474cd8c5a26bf6c8b62d378848a25c12e830cb38755b031dfab3"
+    },
+    {
+      "source_index": 1,
+      "pixel_size": {
+        "width": 774,
+        "height": 1563
+      },
+      "sha256": "468262c9288d06d13971ed4f15c70c375438783bb11495007f6eb821a9a20531"
+    },
+    {
+      "source_index": 2,
+      "pixel_size": {
+        "width": 802,
+        "height": 1543
+      },
+      "sha256": "5d560cacc48847d6d9f073e104a12e7c834b4c4dce61b22a88a1efbd4c006dfc"
+    },
+    {
+      "source_index": 3,
+      "pixel_size": {
+        "width": 837,
+        "height": 1243
+      },
+      "sha256": "41be86a7d6c7910064315f9ee80c92b81ec6772f48efb85343aff02ee9d43982"
+    }
+  ],
+  "portraits": [
+    {
+      "id": "xin",
+      "canonical": "心",
+      "aliases": [],
+      "image": "data/portraits/xin.png",
+      "source_index": 0,
+      "card_index": 0,
+      "card_bbox": {
+        "x": 45,
+        "y": 44,
+        "width": 236,
+        "height": 300
+      },
+      "face_bbox": {
+        "x": 59,
+        "y": 119,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "jingran",
+      "canonical": "景燃",
+      "aliases": [],
+      "image": "data/portraits/jingran.png",
+      "source_index": 0,
+      "card_index": 1,
+      "card_bbox": {
+        "x": 311,
+        "y": 52,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 325,
+        "y": 127,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "qingxiao",
+      "canonical": "清宵",
+      "aliases": [],
+      "image": "data/portraits/qingxiao.png",
+      "source_index": 0,
+      "card_index": 2,
+      "card_bbox": {
+        "x": 569,
+        "y": 52,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 583,
+        "y": 127,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "suisui",
+      "canonical": "穗穗",
+      "aliases": [],
+      "image": "data/portraits/suisui.png",
+      "source_index": 0,
+      "card_index": 3,
+      "card_bbox": {
+        "x": 52,
+        "y": 359,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 66,
+        "y": 434,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "yangyang-xuanling",
+      "canonical": "秧秧·玄翎",
+      "aliases": [
+        "秧秧玄翎",
+        "玄翎"
+      ],
+      "image": "data/portraits/yangyang-xuanling.png",
+      "source_index": 0,
+      "card_index": 4,
+      "card_bbox": {
+        "x": 311,
+        "y": 359,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 325,
+        "y": 434,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "luoxela",
+      "canonical": "洛瑟菈",
+      "aliases": [],
+      "image": "data/portraits/luoxela.png",
+      "source_index": 0,
+      "card_index": 5,
+      "card_bbox": {
+        "x": 569,
+        "y": 359,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 583,
+        "y": 434,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "luxi",
+      "canonical": "露西",
+      "aliases": [],
+      "image": "data/portraits/luxi.png",
+      "source_index": 0,
+      "card_index": 6,
+      "card_bbox": {
+        "x": 52,
+        "y": 663,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 66,
+        "y": 738,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "libeika",
+      "canonical": "丽贝卡",
+      "aliases": [],
+      "image": "data/portraits/libeika.png",
+      "source_index": 0,
+      "card_index": 7,
+      "card_bbox": {
+        "x": 311,
+        "y": 663,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 325,
+        "y": 738,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "daniya",
+      "canonical": "达妮娅",
+      "aliases": [],
+      "image": "data/portraits/daniya.png",
+      "source_index": 0,
+      "card_index": 8,
+      "card_bbox": {
+        "x": 569,
+        "y": 663,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 583,
+        "y": 738,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "feixue",
+      "canonical": "绯雪",
+      "aliases": [],
+      "image": "data/portraits/feixue.png",
+      "source_index": 0,
+      "card_index": 9,
+      "card_bbox": {
+        "x": 52,
+        "y": 972,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 66,
+        "y": 1047,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "xigelika",
+      "canonical": "西格莉卡",
+      "aliases": [],
+      "image": "data/portraits/xigelika.png",
+      "source_index": 0,
+      "card_index": 10,
+      "card_bbox": {
+        "x": 311,
+        "y": 972,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 325,
+        "y": 1047,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "lu-hesi",
+      "canonical": "陆·赫斯",
+      "aliases": [
+        "陆赫斯"
+      ],
+      "image": "data/portraits/lu-hesi.png",
+      "source_index": 0,
+      "card_index": 11,
+      "card_bbox": {
+        "x": 569,
+        "y": 972,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 583,
+        "y": 1047,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "aimisi",
+      "canonical": "爱弥斯",
+      "aliases": [],
+      "image": "data/portraits/aimisi.png",
+      "source_index": 0,
+      "card_index": 12,
+      "card_bbox": {
+        "x": 52,
+        "y": 1276,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 66,
+        "y": 1351,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "moning",
+      "canonical": "莫宁",
+      "aliases": [],
+      "image": "data/portraits/moning.png",
+      "source_index": 0,
+      "card_index": 13,
+      "card_bbox": {
+        "x": 311,
+        "y": 1276,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 325,
+        "y": 1351,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "linnai",
+      "canonical": "琳奈",
+      "aliases": [],
+      "image": "data/portraits/linnai.png",
+      "source_index": 0,
+      "card_index": 14,
+      "card_bbox": {
+        "x": 569,
+        "y": 1276,
+        "width": 226,
+        "height": 282
+      },
+      "face_bbox": {
+        "x": 583,
+        "y": 1351,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "qianxiao",
+      "canonical": "千咲",
+      "aliases": [],
+      "image": "data/portraits/qianxiao.png",
+      "source_index": 1,
+      "card_index": 0,
+      "card_bbox": {
+        "x": 28,
+        "y": 39,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 42,
+        "y": 114,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "qiuyuan",
+      "canonical": "仇远",
+      "aliases": [],
+      "image": "data/portraits/qiuyuan.png",
+      "source_index": 1,
+      "card_index": 1,
+      "card_bbox": {
+        "x": 286,
+        "y": 39,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 300,
+        "y": 114,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "jiabeilina",
+      "canonical": "嘉贝莉娜",
+      "aliases": [],
+      "image": "data/portraits/jiabeilina.png",
+      "source_index": 1,
+      "card_index": 2,
+      "card_bbox": {
+        "x": 544,
+        "y": 39,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 558,
+        "y": 114,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "younuo",
+      "canonical": "尤诺",
+      "aliases": [],
+      "image": "data/portraits/younuo.png",
+      "source_index": 1,
+      "card_index": 3,
+      "card_bbox": {
+        "x": 28,
+        "y": 343,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 42,
+        "y": 418,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "aogusita",
+      "canonical": "奥古斯塔",
+      "aliases": [],
+      "image": "data/portraits/aogusita.png",
+      "source_index": 1,
+      "card_index": 4,
+      "card_bbox": {
+        "x": 286,
+        "y": 343,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 300,
+        "y": 418,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "fuluoluo",
+      "canonical": "弗洛洛",
+      "aliases": [],
+      "image": "data/portraits/fuluoluo.png",
+      "source_index": 1,
+      "card_index": 5,
+      "card_bbox": {
+        "x": 544,
+        "y": 343,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 558,
+        "y": 418,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "lupa",
+      "canonical": "露帕",
+      "aliases": [],
+      "image": "data/portraits/lupa.png",
+      "source_index": 1,
+      "card_index": 6,
+      "card_bbox": {
+        "x": 28,
+        "y": 648,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 42,
+        "y": 723,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "katixiya",
+      "canonical": "卡提希娅",
+      "aliases": [],
+      "image": "data/portraits/katixiya.png",
+      "source_index": 1,
+      "card_index": 7,
+      "card_bbox": {
+        "x": 286,
+        "y": 648,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 300,
+        "y": 723,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "xiakong",
+      "canonical": "夏空",
+      "aliases": [],
+      "image": "data/portraits/xiakong.png",
+      "source_index": 1,
+      "card_index": 8,
+      "card_bbox": {
+        "x": 544,
+        "y": 648,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 558,
+        "y": 723,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "zanni",
+      "canonical": "赞妮",
+      "aliases": [],
+      "image": "data/portraits/zanni.png",
+      "source_index": 1,
+      "card_index": 9,
+      "card_bbox": {
+        "x": 28,
+        "y": 953,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 42,
+        "y": 1028,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "kanteleila",
+      "canonical": "坎特蕾拉",
+      "aliases": [],
+      "image": "data/portraits/kanteleila.png",
+      "source_index": 1,
+      "card_index": 10,
+      "card_bbox": {
+        "x": 286,
+        "y": 953,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 300,
+        "y": 1028,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "bulante",
+      "canonical": "布兰特",
+      "aliases": [],
+      "image": "data/portraits/bulante.png",
+      "source_index": 1,
+      "card_index": 11,
+      "card_bbox": {
+        "x": 544,
+        "y": 953,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 558,
+        "y": 1028,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "feibi",
+      "canonical": "菲比",
+      "aliases": [],
+      "image": "data/portraits/feibi.png",
+      "source_index": 1,
+      "card_index": 12,
+      "card_bbox": {
+        "x": 28,
+        "y": 1257,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 42,
+        "y": 1332,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "luokeke",
+      "canonical": "洛可可",
+      "aliases": [],
+      "image": "data/portraits/luokeke.png",
+      "source_index": 1,
+      "card_index": 13,
+      "card_bbox": {
+        "x": 286,
+        "y": 1257,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 300,
+        "y": 1332,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "keleita",
+      "canonical": "珂莱塔",
+      "aliases": [],
+      "image": "data/portraits/keleita.png",
+      "source_index": 1,
+      "card_index": 14,
+      "card_bbox": {
+        "x": 544,
+        "y": 1257,
+        "width": 226,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 558,
+        "y": 1332,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "chun",
+      "canonical": "椿",
+      "aliases": [],
+      "image": "data/portraits/chun.png",
+      "source_index": 2,
+      "card_index": 0,
+      "card_bbox": {
+        "x": 31,
+        "y": 33,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 45,
+        "y": 108,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "shouanren",
+      "canonical": "守岸人",
+      "aliases": [],
+      "image": "data/portraits/shouanren.png",
+      "source_index": 2,
+      "card_index": 1,
+      "card_bbox": {
+        "x": 289,
+        "y": 33,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 303,
+        "y": 108,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "xiangliyao",
+      "canonical": "相里要",
+      "aliases": [],
+      "image": "data/portraits/xiangliyao.png",
+      "source_index": 2,
+      "card_index": 2,
+      "card_bbox": {
+        "x": 546,
+        "y": 33,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 560,
+        "y": 108,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "zhezhi",
+      "canonical": "折枝",
+      "aliases": [],
+      "image": "data/portraits/zhezhi.png",
+      "source_index": 2,
+      "card_index": 3,
+      "card_bbox": {
+        "x": 31,
+        "y": 339,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 45,
+        "y": 414,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "changli",
+      "canonical": "长离",
+      "aliases": [],
+      "image": "data/portraits/changli.png",
+      "source_index": 2,
+      "card_index": 4,
+      "card_bbox": {
+        "x": 289,
+        "y": 339,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 303,
+        "y": 414,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "jinxi",
+      "canonical": "今汐",
+      "aliases": [],
+      "image": "data/portraits/jinxi.png",
+      "source_index": 2,
+      "card_index": 5,
+      "card_bbox": {
+        "x": 546,
+        "y": 339,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 560,
+        "y": 414,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "yinlin",
+      "canonical": "吟霖",
+      "aliases": [],
+      "image": "data/portraits/yinlin.png",
+      "source_index": 2,
+      "card_index": 6,
+      "card_bbox": {
+        "x": 31,
+        "y": 644,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 45,
+        "y": 719,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "jiyan",
+      "canonical": "忌炎",
+      "aliases": [],
+      "image": "data/portraits/jiyan.png",
+      "source_index": 2,
+      "card_index": 7,
+      "card_bbox": {
+        "x": 289,
+        "y": 644,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 303,
+        "y": 719,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "kakaluo",
+      "canonical": "卡卡罗",
+      "aliases": [],
+      "image": "data/portraits/kakaluo.png",
+      "source_index": 2,
+      "card_index": 8,
+      "card_bbox": {
+        "x": 546,
+        "y": 644,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 560,
+        "y": 719,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "lingyang",
+      "canonical": "凌阳",
+      "aliases": [],
+      "image": "data/portraits/lingyang.png",
+      "source_index": 2,
+      "card_index": 9,
+      "card_bbox": {
+        "x": 31,
+        "y": 950,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 45,
+        "y": 1025,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "jianxin",
+      "canonical": "鉴心",
+      "aliases": [],
+      "image": "data/portraits/jianxin.png",
+      "source_index": 2,
+      "card_index": 10,
+      "card_bbox": {
+        "x": 289,
+        "y": 950,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 303,
+        "y": 1025,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "weilinai",
+      "canonical": "维里奈",
+      "aliases": [],
+      "image": "data/portraits/weilinai.png",
+      "source_index": 2,
+      "card_index": 11,
+      "card_bbox": {
+        "x": 546,
+        "y": 950,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 560,
+        "y": 1025,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "anke",
+      "canonical": "安可",
+      "aliases": [],
+      "image": "data/portraits/anke.png",
+      "source_index": 2,
+      "card_index": 12,
+      "card_bbox": {
+        "x": 31,
+        "y": 1254,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 45,
+        "y": 1329,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "rover-aero",
+      "canonical": "漂泊者·气动",
+      "aliases": [
+        "气动漂泊者",
+        "漂泊者气动"
+      ],
+      "image": "data/portraits/rover-aero.png",
+      "source_index": 2,
+      "card_index": 13,
+      "card_bbox": {
+        "x": 289,
+        "y": 1254,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 303,
+        "y": 1329,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "buling",
+      "canonical": "卜灵",
+      "aliases": [],
+      "image": "data/portraits/buling.png",
+      "source_index": 2,
+      "card_index": 14,
+      "card_bbox": {
+        "x": 546,
+        "y": 1254,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 560,
+        "y": 1329,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "dengdeng",
+      "canonical": "灯灯",
+      "aliases": [],
+      "image": "data/portraits/dengdeng.png",
+      "source_index": 3,
+      "card_index": 0,
+      "card_bbox": {
+        "x": 43,
+        "y": 22,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 57,
+        "y": 97,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "youhu",
+      "canonical": "釉瑚",
+      "aliases": [],
+      "image": "data/portraits/youhu.png",
+      "source_index": 3,
+      "card_index": 1,
+      "card_bbox": {
+        "x": 301,
+        "y": 22,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 315,
+        "y": 97,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "yuanwu",
+      "canonical": "渊武",
+      "aliases": [],
+      "image": "data/portraits/yuanwu.png",
+      "source_index": 3,
+      "card_index": 2,
+      "card_bbox": {
+        "x": 559,
+        "y": 22,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 573,
+        "y": 97,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "danjin",
+      "canonical": "丹瑾",
+      "aliases": [],
+      "image": "data/portraits/danjin.png",
+      "source_index": 3,
+      "card_index": 3,
+      "card_bbox": {
+        "x": 43,
+        "y": 329,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 57,
+        "y": 404,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "sanhua",
+      "canonical": "散华",
+      "aliases": [],
+      "image": "data/portraits/sanhua.png",
+      "source_index": 3,
+      "card_index": 4,
+      "card_bbox": {
+        "x": 301,
+        "y": 329,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 315,
+        "y": 404,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "moteifei",
+      "canonical": "莫特斐",
+      "aliases": [],
+      "image": "data/portraits/moteifei.png",
+      "source_index": 3,
+      "card_index": 5,
+      "card_bbox": {
+        "x": 559,
+        "y": 329,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 573,
+        "y": 404,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "taoqi",
+      "canonical": "桃祈",
+      "aliases": [],
+      "image": "data/portraits/taoqi.png",
+      "source_index": 3,
+      "card_index": 6,
+      "card_bbox": {
+        "x": 43,
+        "y": 635,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 57,
+        "y": 710,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "qiushui",
+      "canonical": "秋水",
+      "aliases": [],
+      "image": "data/portraits/qiushui.png",
+      "source_index": 3,
+      "card_index": 7,
+      "card_bbox": {
+        "x": 301,
+        "y": 635,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 315,
+        "y": 710,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "baizhi",
+      "canonical": "白芷",
+      "aliases": [],
+      "image": "data/portraits/baizhi.png",
+      "source_index": 3,
+      "card_index": 8,
+      "card_bbox": {
+        "x": 559,
+        "y": 635,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 573,
+        "y": 710,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "yangyang",
+      "canonical": "秧秧",
+      "aliases": [],
+      "image": "data/portraits/yangyang.png",
+      "source_index": 3,
+      "card_index": 9,
+      "card_bbox": {
+        "x": 43,
+        "y": 941,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 57,
+        "y": 1016,
+        "width": 160,
+        "height": 135
+      }
+    },
+    {
+      "id": "chixia",
+      "canonical": "炽霞",
+      "aliases": [],
+      "image": "data/portraits/chixia.png",
+      "source_index": 3,
+      "card_index": 10,
+      "card_bbox": {
+        "x": 301,
+        "y": 941,
+        "width": 225,
+        "height": 279
+      },
+      "face_bbox": {
+        "x": 315,
+        "y": 1016,
+        "width": 160,
+        "height": 135
+      }
+    }
+  ]
+}

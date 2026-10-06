@@ -1,0 +1,40 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      WUWA_DATA_DIR: /app/data
+      WUWA_CORS_ORIGINS: ""
+      WUWA_DATABASE_FILE: ${WUWA_DATABASE_FILE:-reference-dps-v3.5.2.json}
+      WUWA_MAX_RECORDS: ${WUWA_MAX_RECORDS:-5000}
+      WUWA_MAX_SEARCH_LIMIT: ${WUWA_MAX_SEARCH_LIMIT:-250000}
+      WUWA_OPTIMIZER_TIMEOUT_SECONDS: ${WUWA_OPTIMIZER_TIMEOUT_SECONDS:-20}
+      WUWA_OPTIMIZER_WORKERS: ${WUWA_OPTIMIZER_WORKERS:-2}
+    volumes:
+      - ./data:/app/data:ro
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    mem_limit: 768m
+    cpus: 2.0
+    pids_limit: 64
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

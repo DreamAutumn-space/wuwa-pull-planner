@@ -1,0 +1,118 @@
+{
+  "account": {
+    "characters": [
+      {
+        "character": "示例主C甲",
+        "chain": 0
+      },
+      {
+        "character": "示例副C甲",
+        "chain": 0
+      },
+      {
+        "character": "示例奶位甲",
+        "chain": 0
+      },
+      {
+        "character": "示例主C乙",
+        "chain": 0
+      },
+      {
+        "character": "示例副C乙",
+        "chain": 0
+      },
+      {
+        "character": "示例主C丙",
+        "chain": 0
+      },
+      {
+        "character": "示例副C丙",
+        "chain": 0
+      },
+      {
+        "character": "示例奶位乙",
+        "chain": 0
+      },
+      {
+        "character": "示例主C丁",
+        "chain": 0
+      },
+      {
+        "character": "示例副C丁",
+        "chain": 0
+      }
+    ],
+    "weapons": [
+      {
+        "id": "owned-demo-1",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-2",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-3",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-4",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-5",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-6",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-7",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-8",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-9",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-10",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-11",
+        "weapon": "示例武器",
+        "refinement": 1
+      },
+      {
+        "id": "owned-demo-12",
+        "weapon": "示例武器",
+        "refinement": 1
+      }
+    ]
+  },
+  "settings": {
+    "mode": "single",
+    "budget": 162.3,
+    "max_difficulty": "中",
+    "repeatable_healers": [
+      "示例奶位甲",
+      "示例奶位乙"
+    ],
+    "healer_capacity": 2
+  }
+}

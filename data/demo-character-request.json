@@ -1,0 +1,66 @@
+{
+  "account": {
+    "characters": [
+      {
+        "character": "示例主C甲",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例副C甲",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例奶位甲",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例主C乙",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例副C乙",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例主C丙",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例副C丙",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例奶位乙",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例主C丁",
+        "chain": 0,
+        "signature_refinement": 1
+      },
+      {
+        "character": "示例副C丁",
+        "chain": 0,
+        "signature_refinement": 1
+      }
+    ]
+  },
+  "settings": {
+    "mode": "single",
+    "budget": 270.52,
+    "max_difficulty": "中",
+    "repeatable_healers": [
+      "示例奶位甲",
+      "示例奶位乙"
+    ],
+    "healer_capacity": 2
+  }
+}

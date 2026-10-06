@@ -1,0 +1,135 @@
+{
+  "template_id": "account-card-v1",
+  "kind": "account-card",
+  "calibration_status": "provisional",
+  "source": {
+    "width": 1000,
+    "height": 2601,
+    "observed_template": "GsCore / WutheringWavesUID character card",
+    "observed_on": "2026-10-06"
+  },
+  "privacy": {
+    "fields": [
+      "uid",
+      "account_name",
+      "account_date"
+    ],
+    "default_persistence": "request_or_browser_only",
+    "upload_to_third_party_ocr": false
+  },
+  "grid": {
+    "rows": 8,
+    "columns": 5,
+    "occupied_slots": 37,
+    "column_left_px": [
+      46,
+      231,
+      416,
+      601,
+      786
+    ],
+    "row_top_px": [
+      851,
+      1062,
+      1272,
+      1483,
+      1693,
+      1904,
+      2115,
+      2325
+    ],
+    "card_bbox_px": {
+      "width": 171,
+      "height": 194
+    },
+    "card_bbox_normalized": {
+      "width": 0.171,
+      "height": 0.0745867
+    },
+    "occupied_by_row": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      2
+    ],
+    "coordinate_confidence": 0.97
+  },
+  "confirmed_rectangles": [
+    {
+      "id": "character_grid_card_area",
+      "pixels": {
+        "x": 46,
+        "y": 851,
+        "width": 911,
+        "height": 1668
+      },
+      "normalized": {
+        "x": 0.046,
+        "y": 0.32718185,
+        "width": 0.911,
+        "height": 0.64129181
+      },
+      "confidence": 0.92,
+      "note": "Covers the 8 row slots; last row has only two populated cards."
+    }
+  ],
+  "field_windows_relative_to_card": {
+    "status": "provisional",
+    "manual_confirmation_required": true,
+    "level": {
+      "x": 8,
+      "y": 8,
+      "width": 78,
+      "height": 48
+    },
+    "element": {
+      "x": 118,
+      "y": 7,
+      "width": 47,
+      "height": 50
+    },
+    "character_portrait": {
+      "x": 8,
+      "y": 8,
+      "width": 160,
+      "height": 169
+    },
+    "weapon_overlay": {
+      "x": -10,
+      "y": 77,
+      "width": 86,
+      "height": 120
+    },
+    "weapon_rank_text": {
+      "x": 7,
+      "y": 103,
+      "width": 82,
+      "height": 52
+    },
+    "resonance_chain_text": {
+      "x": 63,
+      "y": 127,
+      "width": 102,
+      "height": 50
+    }
+  },
+  "field_semantics": {
+    "character_id": "icon_match_then_manual",
+    "weapon_id": "icon_match_then_manual",
+    "weapon_rank": "small_text_or_manual",
+    "resonance_chain": "small_text_or_manual",
+    "level": "small_ocr_or_manual",
+    "element": "icon_match_or_manual"
+  },
+  "warnings": [
+    "The card shows equipped weapons only; it cannot establish total weapon inventory.",
+    "Character and weapon names are not rendered as text in the card slots.",
+    "Weapon rank and resonance chain are separate overlays.",
+    "Do not fill unknown values with zero, rank one, or an empty inventory."
+  ],
+  "confidence_basis": "Manual visual geometry estimates; not measured OCR recognition accuracy."
+}

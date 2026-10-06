@@ -1,0 +1,278 @@
+{
+  "template_id": "dps-table-v3.5.2",
+  "kind": "dps-table",
+  "calibration_status": "provisional",
+  "source": {
+    "width": 3974,
+    "height": 14756,
+    "observed_title": "全配置数据统计",
+    "observed_version": "V3.5.2",
+    "filename_version_is_untrusted": true,
+    "observed_on": "2026-10-06"
+  },
+  "confirmed_rectangles": [
+    {
+      "id": "intro_content",
+      "pixels": {
+        "x": 0,
+        "y": 0,
+        "width": 3974,
+        "height": 1851
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1.0,
+        "height": 0.1254405
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_intro_to_3_0_lower",
+      "pixels": {
+        "x": 0,
+        "y": 1851,
+        "width": 3974,
+        "height": 43
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.1254405,
+        "width": 1.0,
+        "height": 0.00291407
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_3_0_lower_to_3_0_upper",
+      "pixels": {
+        "x": 0,
+        "y": 3068,
+        "width": 3974,
+        "height": 42
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.20791542,
+        "width": 1.0,
+        "height": 0.0028463
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_3_0_upper_to_2_0_lower",
+      "pixels": {
+        "x": 0,
+        "y": 6175,
+        "width": 3974,
+        "height": 43
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.41847384,
+        "width": 1.0,
+        "height": 0.00291407
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_2_0_lower_to_2_0_mid",
+      "pixels": {
+        "x": 0,
+        "y": 8292,
+        "width": 3974,
+        "height": 43
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.56194091,
+        "width": 1.0,
+        "height": 0.00291407
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_2_0_mid_to_2_0_upper",
+      "pixels": {
+        "x": 0,
+        "y": 10412,
+        "width": 3974,
+        "height": 43
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.70561128,
+        "width": 1.0,
+        "height": 0.00291407
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_2_0_upper_to_1_0",
+      "pixels": {
+        "x": 0,
+        "y": 12539,
+        "width": 3974,
+        "height": 42
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.84975603,
+        "width": 1.0,
+        "height": 0.0028463
+      },
+      "confidence": 0.99
+    },
+    {
+      "id": "separator_after_1_0",
+      "pixels": {
+        "x": 0,
+        "y": 14718,
+        "width": 3974,
+        "height": 38
+      },
+      "normalized": {
+        "x": 0.0,
+        "y": 0.99742478,
+        "width": 1.0,
+        "height": 0.00257522
+      },
+      "confidence": 0.99
+    }
+  ],
+  "section_bands": [
+    {
+      "id": "intro",
+      "label": "口径说明",
+      "content_y_px": [
+        0,
+        1850
+      ],
+      "content_y_normalized": [
+        0.0,
+        0.12537273
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "3.0_lower",
+      "label": "3.0下",
+      "content_y_px": [
+        1894,
+        3067
+      ],
+      "content_y_normalized": [
+        0.12835457,
+        0.20784766
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "3.0_upper",
+      "label": "3.0上",
+      "content_y_px": [
+        3110,
+        6174
+      ],
+      "content_y_normalized": [
+        0.21076172,
+        0.41840607
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "2.0_lower",
+      "label": "2.0下",
+      "content_y_px": [
+        6218,
+        8291
+      ],
+      "content_y_normalized": [
+        0.42138791,
+        0.56187314
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "2.0_mid",
+      "label": "2.0中",
+      "content_y_px": [
+        8335,
+        10411
+      ],
+      "content_y_normalized": [
+        0.56485497,
+        0.70554351
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "2.0_upper",
+      "label": "2.0上",
+      "content_y_px": [
+        10455,
+        12538
+      ],
+      "content_y_normalized": [
+        0.70852535,
+        0.84968826
+      ],
+      "confidence": 0.99
+    },
+    {
+      "id": "1.0",
+      "label": "1.0",
+      "content_y_px": [
+        12581,
+        14717
+      ],
+      "content_y_normalized": [
+        0.85260233,
+        0.99735701
+      ],
+      "confidence": 0.99
+    }
+  ],
+  "panel_detection": {
+    "status": "provisional",
+    "confirmed_panel_rectangles": false,
+    "reason": "Panel count, column count and heights vary by section; detect panels inside a section after the separator anchor."
+  },
+  "field_semantics": {
+    "metadata": [
+      "configuration_name",
+      "difficulty_left",
+      "stability_right",
+      "author_or_checker",
+      "video_or_source"
+    ],
+    "difficulty_values": [
+      "低",
+      "中低",
+      "中",
+      "中高",
+      "高"
+    ],
+    "main_table_headers": [
+      "配置",
+      "全队",
+      "单人",
+      "提升(前)"
+    ],
+    "support_table_headers": [
+      "链子",
+      "全队",
+      "单人",
+      "提升率"
+    ],
+    "row_labels": "preserve_source_text; may mix resonance chains and weapon refinements",
+    "numeric_values": "preserve_raw_text_and_optional_number; do_not_assume_units_or_scale"
+  },
+  "warnings": [
+    "The left metadata tag is difficulty and the right tag is stability according to the red annotation in the image.",
+    "Notes and source links are provenance, not DPS cells.",
+    "Do not fabricate a public dataset from unreadable cells or infer universal weapon rarity/cost.",
+    "Every parsed table needs manual confirmation before it can be used by the optimizer."
+  ],
+  "confidence_basis": "Manual visual geometry estimates; not measured OCR recognition accuracy."
+}
