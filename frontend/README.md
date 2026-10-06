@@ -17,3 +17,5 @@ npm.cmd run dev -- --host 127.0.0.1
 开发服务器会把 `/api` 代理到 `http://localhost:8000`。生产镜像由 `Dockerfile` 构建，Nginx 同源代理 `/api` 到 Compose 中名为 `backend` 的服务。
 
 前端通过 `/api/catalog` 获取可选角色目录，通过 `/api/reference-dps` 显示全配队 DPS 原图；优化请求只发送当前可见角色的名称、共鸣链和专武精炼。
+
+`npm.cmd test` 验证奶位默认名单的偏好迁移；`npm.cmd run build` 检查 TypeScript 并生成生产构建。

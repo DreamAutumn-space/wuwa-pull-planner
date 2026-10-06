@@ -12,7 +12,7 @@
     "cost_mode": "gold",
     "budget": 3,
     "max_difficulty": "中高",
-    "repeatable_healers": ["守岸人", "维里奈", "莫宁", "卜灵", "白芷"],
+    "repeatable_healers": ["守岸人", "维里奈", "莫宁", "卜灵", "白芷", "穗穗"],
     "healer_capacity": 2,
     "search_limit": 250000
   }

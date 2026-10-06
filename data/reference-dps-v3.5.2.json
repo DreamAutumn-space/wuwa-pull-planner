@@ -200,8 +200,8 @@
         "refinement": 1
       },
       {
-        "character": "漂泊者·导电",
-        "weapon": "表内常驻·漂泊者·导电",
+        "character": "漂泊者·气动",
+        "weapon": "表内常驻·漂泊者·气动",
         "refinement": 1
       },
       {
@@ -257,6 +257,7 @@
     ],
     "non_gacha_characters": [
       "漂泊者·导电",
+      "漂泊者·气动",
       "漂泊者·衍射"
     ]
   },
@@ -37942,10 +37943,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38004,10 +38005,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38066,10 +38067,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38128,10 +38129,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38190,10 +38191,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38252,10 +38253,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38314,10 +38315,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],
@@ -38376,10 +38377,10 @@
           "refinement": 1
         },
         {
-          "character": "漂泊者·导电",
+          "character": "漂泊者·气动",
           "chain": 6,
           "max_chain": 6,
-          "weapon": "表内常驻·漂泊者·导电",
+          "weapon": "表内常驻·漂泊者·气动",
           "refinement": 1
         }
       ],

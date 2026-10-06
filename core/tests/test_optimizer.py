@@ -313,7 +313,7 @@ def test_default_healer_whitelist_applies_only_when_the_field_is_omitted() -> No
     )
 
     assert settings_from_json(default_settings).repeatable_healers == frozenset(
-        {"守岸人", "维里奈", "莫宁", "卜灵", "白芷"}
+        {"守岸人", "维里奈", "莫宁", "卜灵", "白芷", "穗穗"}
     )
     assert defaulted["current"]["feasible"] is True
     assert explicitly_disabled["best"]["feasible"] is False

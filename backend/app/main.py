@@ -43,7 +43,7 @@ except ImportError:  # Lets API-only tooling import before the core package exis
     class SearchLimitError(RuntimeError):
         """Fallback used only while the core package has not been installed."""
 
-    NON_GACHA_CHARACTERS = frozenset({"漂泊者·导电", "漂泊者·衍射"})
+    NON_GACHA_CHARACTERS = frozenset({"漂泊者·导电", "漂泊者·衍射", "漂泊者·气动"})
 
     def prepare_reference_inputs(
         account: dict[str, Any], database: dict[str, Any], *, assume_common_weapons: bool
@@ -425,7 +425,7 @@ def _reference_coverage_note(database: Mapping[str, Any]) -> str | None:
     names = metadata.get("non_gacha_characters")
     if not isinstance(names, list) or not any(name in NON_GACHA_CHARACTERS for name in names):
         return None
-    return "漂泊者·导电、漂泊者·衍射等非抽卡形态仅在账号中手动录入对应形态且共鸣链达到表格要求时纳入；不会自动赠送形态或共鸣链。"
+    return "漂泊者·气动、漂泊者·衍射等非抽卡形态仅在账号中手动录入对应形态且共鸣链达到表格要求时纳入；不会自动赠送形态或共鸣链。"
 
 
 def _prepare_database_for_account(

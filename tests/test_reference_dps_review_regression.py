@@ -23,7 +23,7 @@ def test_all_source_roles_reviewed_and_similar_portraits_are_not_conflated():
     assert panels['2.0_mid-panel-03']['characters'][1]['name'] == '坎特蕾拉'
     assert panels['2.0_lower-panel-02']['characters'][0]['name'] == '嘉贝莉娜'
     assert panels['1.0-panel-03']['characters'][1]['name'] == '吟霖'
-    assert panels['2.0_mid-panel-07']['characters'][2]['name'] == '漂泊者·导电'
+    assert panels['2.0_mid-panel-07']['characters'][2]['name'] == '漂泊者·气动'
     assert panels['2.0_mid-panel-09']['characters'][2]['name'] == '漂泊者·衍射'
 
 

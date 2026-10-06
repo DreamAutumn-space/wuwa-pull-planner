@@ -207054,7 +207054,7 @@
           "identity_verification": "manual_source_and_named_portrait_check"
         },
         {
-          "name": "漂泊者·导电",
+          "name": "漂泊者·气动",
           "candidates": [
             {
               "name": "折枝",
@@ -210001,9 +210001,16 @@
         "characters": [
           "卡提希娅",
           "夏空",
-          "漂泊者·导电"
+          "漂泊者·气动"
         ],
-        "evidence_note": "Root directly compared named screenshot references and source pixels. Rover forms use printed 光主/雷主 text, not portrait inference.",
+        "evidence_note": "用户确认：此配队第三槽应为漂泊者·气动，覆盖此前对头像／表内简称的推断；原图表格备注按原文保留，不据此改写。",
+        "user_correction": {
+          "confirmed_by": "project user",
+          "scope": "2.0_mid-panel-07/table-1 third roster slot",
+          "previous_value": "漂泊者·导电",
+          "corrected_value": "漂泊者·气动",
+          "reason": "用户核对后明确确认"
+        },
         "tables": [
           {
             "title": "双下标准",

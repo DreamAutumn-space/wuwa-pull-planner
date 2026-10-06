@@ -24,7 +24,7 @@ from typing import Any, Iterable
 CHARACTER_PULL_CENTS = 8_115
 WEAPON_PULL_CENTS = 5_411
 DIFFICULTIES = ("低", "中低", "中", "中高", "高")
-DEFAULT_REPEATABLE_HEALERS = ("守岸人", "维里奈", "莫宁", "卜灵", "白芷")
+DEFAULT_REPEATABLE_HEALERS = ("守岸人", "维里奈", "莫宁", "卜灵", "白芷", "穗穗")
 HEALER_REPEAT_CAPACITY = 2
 _DIFFICULTY_INDEX = {name: index for index, name in enumerate(DIFFICULTIES)}
 _MODES = {"single", "two_teams", "four_teams", "main_c", "fixed_team", "character"}

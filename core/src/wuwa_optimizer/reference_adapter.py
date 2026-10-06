@@ -16,7 +16,7 @@ from .optimizer import ValidationError
 COMMON_WEAPON_PREFIX = "表内常驻·"
 MAX_ASSUMED_COMMON_WEAPON_MAPPINGS = 256
 COMMON_WEAPON_INSTANCES_PER_MAPPING = 4
-NON_GACHA_CHARACTERS = frozenset({"漂泊者·导电", "漂泊者·衍射"})
+NON_GACHA_CHARACTERS = frozenset({"漂泊者·导电", "漂泊者·衍射", "漂泊者·气动"})
 
 
 def _metadata(database: Mapping[str, Any]) -> Mapping[str, Any] | None:
@@ -115,7 +115,7 @@ def prepare_reference_inputs(
     ``account`` is the normalized physical-instance model.  Common R1 weapons
     can only be added from the exact fixed-prefix metadata mapping and only for
     simplified accounts selected by ``assume_common_weapons``.  Metadata can
-    restrict the two known non-gacha Rover forms, but never grants either form
+    restrict the known non-gacha Rover forms, but never grants a form
     or any resonance chain.
     """
 

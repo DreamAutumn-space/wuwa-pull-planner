@@ -6,6 +6,8 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import pytest
+
 from fastapi.testclient import TestClient
 
 from app.main import JSON_LIMIT_BYTES, RuntimeConfig, create_app
@@ -304,8 +306,9 @@ def test_client_database_cannot_grant_arbitrary_or_high_refinement_weapon(tmp_pa
     assert response.json()["detail"]["code"] == "validation_error"
 
 
-def test_non_gacha_forms_require_explicit_matching_chain_and_add_coverage_note(tmp_path: Path) -> None:
-    write_signature_catalog(tmp_path, [{"character": "漂泊者·导电"}])
+@pytest.mark.parametrize("rover", ["漂泊者·导电", "漂泊者·衍射", "漂泊者·气动"])
+def test_non_gacha_forms_require_explicit_matching_chain_and_add_coverage_note(tmp_path: Path, rover: str) -> None:
+    write_signature_catalog(tmp_path, [{"character": rover}])
     received = {}
 
     def optimizer(account, database, settings):
@@ -314,13 +317,13 @@ def test_non_gacha_forms_require_explicit_matching_chain_and_add_coverage_note(t
 
     database = {
         "version": "non-gacha-test",
-        "metadata": {"non_gacha_characters": ["漂泊者·导电", "漂泊者·衍射"]},
+        "metadata": {"non_gacha_characters": [rover]},
         "records": [
             {
                 "id": "electro-rover-c6",
-                "main_c": "漂泊者·导电",
+                "main_c": rover,
                 "members": [
-                    {"character": "漂泊者·导电", "chain": 6, "weapon": "Test weapon", "refinement": 1},
+                    {"character": rover, "chain": 6, "weapon": "Test weapon", "refinement": 1},
                     {"character": "Test sub-DPS", "chain": 0, "weapon": "Test weapon", "refinement": 1},
                     {"character": "Test healer", "chain": 0, "weapon": "Test weapon", "refinement": 1},
                 ],
@@ -332,14 +335,14 @@ def test_non_gacha_forms_require_explicit_matching_chain_and_add_coverage_note(t
         response = client.post(
             "/api/optimize",
             json={
-                "account": {"characters": [{"character": "漂泊者·导电", "chain": 5, "signature_refinement": 0}]},
+                "account": {"characters": [{"character": rover, "chain": 5, "signature_refinement": 0}]},
                 "settings": sample_settings(),
                 "database": database,
             },
         )
 
     assert response.status_code == 200
-    assert received["account"]["characters"][0] == {"character": "漂泊者·导电", "chain": 5}
+    assert received["account"]["characters"][0] == {"character": rover, "chain": 5}
     assert received["database"]["records"] == []
     assert "不会自动赠送形态或共鸣链" in response.json()["database_coverage_note"]
 

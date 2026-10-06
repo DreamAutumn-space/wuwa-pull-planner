@@ -5,13 +5,14 @@ import { DIFFICULTIES, MODES, type Account, type CharacterCatalog, type CostMode
 import CharacterSelect from './components/CharacterSelect.vue'
 import DpsRecognitionViewer from './components/DpsRecognitionViewer.vue'
 import TeamTable from './components/TeamTable.vue'
+import { DEFAULT_HEALERS, migrateRepeatableHealers } from './settingsDefaults'
 
 const STORAGE_ACCOUNT = 'wuwa-dps.account.v2'
 const STORAGE_ACCOUNT_LEGACY = 'wuwa-dps.account.v1'
-const STORAGE_SETTINGS = 'wuwa-dps.settings.v2'
+const STORAGE_SETTINGS = 'wuwa-dps.settings.v3'
+const STORAGE_SETTINGS_PREVIOUS = 'wuwa-dps.settings.v2'
 const STORAGE_SETTINGS_LEGACY = 'wuwa-dps.settings.v1'
 const STORAGE_BUDGET_PREFERENCES = 'wuwa-dps.budget-preferences.v1'
-const DEFAULT_HEALERS = ['守岸人', '维里奈', '莫宁', '卜灵', '白芷']
 const FOUR_STAR_CHARACTERS = ['秧秧', '白芷', '炽霞', '丹瑾', '莫特斐', '桃祈', '渊武', '散华', '釉瑚', '灯灯', '秋水', '卜灵'] as const
 const FOUR_STAR_SET = new Set<string>(FOUR_STAR_CHARACTERS)
 
@@ -83,7 +84,8 @@ function migrateAccount(value: unknown): { account: Account; migrated: boolean; 
 const savedV2 = readStored<unknown>(STORAGE_ACCOUNT, null)
 const loadedAccount = migrateAccount(savedV2 ?? readStored<unknown>(STORAGE_ACCOUNT_LEGACY, null))
 const account = reactive<Account>(loadedAccount.account)
-const savedSettings = readStored<Partial<OptimizeSettings> | null>(STORAGE_SETTINGS, null)
+const currentSettings = readStored<Partial<OptimizeSettings> | null>(STORAGE_SETTINGS, null)
+const savedSettings = currentSettings ?? readStored<Partial<OptimizeSettings> | null>(STORAGE_SETTINGS_PREVIOUS, null)
 const legacySettings = readStored<Partial<OptimizeSettings>>(STORAGE_SETTINGS_LEGACY, {})
 const savedBudgetPreferences = readStored<Partial<Record<CostMode, number>>>(STORAGE_BUDGET_PREFERENCES, {})
 const loadedCostMode: CostMode = savedSettings?.cost_mode === 'gold' ? 'gold' : 'pulls'
@@ -105,7 +107,7 @@ const settings = reactive<OptimizeSettings>({
   ...(savedSettings ?? legacySettings),
   cost_mode: loadedCostMode,
   budget: loadedCostMode === 'gold' ? budgetPreferences.gold : budgetPreferences.pulls,
-  repeatable_healers: savedSettings?.repeatable_healers ?? (legacySettings.repeatable_healers?.length ? legacySettings.repeatable_healers : [...DEFAULT_HEALERS]),
+  repeatable_healers: migrateRepeatableHealers(savedSettings?.repeatable_healers ?? (legacySettings.repeatable_healers?.length ? legacySettings.repeatable_healers : undefined), currentSettings === null),
   healer_capacity: 2,
 })
 const health = ref<'checking' | 'online' | 'offline'>('checking')
@@ -635,6 +637,7 @@ function clearLocal(): void {
     localStorage.removeItem(STORAGE_ACCOUNT)
     localStorage.removeItem(STORAGE_ACCOUNT_LEGACY)
     localStorage.removeItem(STORAGE_SETTINGS)
+    localStorage.removeItem(STORAGE_SETTINGS_PREVIOUS)
     localStorage.removeItem(STORAGE_SETTINGS_LEGACY)
     localStorage.removeItem(STORAGE_BUDGET_PREFERENCES)
   } catch {
@@ -907,7 +910,7 @@ onMounted(async () => {
               <small>筛选包含该角色的单队，角色可处于任意槽位。</small>
             </label>
             <label v-if="settings.mode === 'fixed_team'" class="wide">固定队伍成员（逗号分隔）<input v-model="targetTeamText" placeholder="如：今汐, 折枝, 守岸人" /></label>
-            <label class="wide">允许跨队重复的奶位（逗号分隔）<input v-model="healerText" placeholder="守岸人, 维里奈, 莫宁, 卜灵, 白芷" /><small>默认名单可自行修改；只有名单中的角色可跨队使用，每名奶位固定最多参与 2 队。</small></label>
+            <label class="wide">允许跨队重复的奶位（逗号分隔）<input v-model="healerText" placeholder="守岸人, 维里奈, 莫宁, 卜灵, 白芷, 穗穗" /><small>默认名单可自行修改；只有名单中的角色可跨队使用，每名奶位固定最多参与 2 队。</small></label>
           </div>
 
           <fieldset class="difficulty-box">

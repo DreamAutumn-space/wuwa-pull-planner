@@ -90,3 +90,17 @@ def test_only_declared_fixed_rover_forms_are_filtered_by_explicit_chain() -> Non
 
     assert [record["id"] for record in unowned_database["records"]] == ["custom-c6"]
     assert [record["id"] for record in owned_database["records"]] == ["rover-c6", "custom-c6"]
+
+
+def test_aero_rover_requires_the_owned_form_and_all_required_chains() -> None:
+    source_database = database({"non_gacha_characters": ["漂泊者·气动"]})
+    source_database["records"][0]["members"][0]["character"] = "漂泊者·气动"
+    for owned_form, chain, feasible in [
+        ("漂泊者·导电", 6, False),
+        ("漂泊者·气动", 5, False),
+        ("漂泊者·气动", 6, True),
+    ]:
+        inventory = account(chain=chain)
+        inventory["characters"][0]["character"] = owned_form
+        _, prepared = prepare_reference_inputs(inventory, source_database, assume_common_weapons=False)
+        assert any(record["id"] == "rover-c6" for record in prepared["records"]) is feasible

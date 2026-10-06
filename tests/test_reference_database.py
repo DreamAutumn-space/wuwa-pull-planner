@@ -64,6 +64,20 @@ def test_conditional_columns_remain_source_values_not_optimistic_maximum(compile
     assert record['source']['row'][3:] == ['8.92', '9.67']
 
 
+def test_confirmed_aero_rover_roster_is_a_non_gacha_baseline(compiled):
+    record = find(compiled, '2.0_mid-panel-07/table-1', '2链')
+    members = {member['character']: member for member in record['members']}
+    assert set(members) == {'卡提希娅', '夏空', '漂泊者·气动'}
+    assert members['漂泊者·气动'] == {
+        'character': '漂泊者·气动',
+        'chain': 6,
+        'max_chain': 6,
+        'weapon': '表内常驻·漂泊者·气动',
+        'refinement': 1,
+    }
+    assert {'漂泊者·导电', '漂泊者·衍射', '漂泊者·气动'} <= set(compiled['metadata']['non_gacha_characters'])
+
+
 def test_missing_values_and_unrecognized_labels_are_not_guessed(compiled):
     assert not any(r['source']['table_id'] == '2.0_lower-panel-05/table-1' for r in compiled['records'])
     assert not any(r['source']['table_id'] == '2.0_mid-panel-04/table-1' and r['source']['label'] == '1链' for r in compiled['records'])
