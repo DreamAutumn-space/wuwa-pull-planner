@@ -8,6 +8,34 @@ GitHub: https://github.com/DreamAutumn-space/wuwa-pull-planner
 
 **优化器默认使用 V3.5.2 原图的已映射参考数据。** 角色资产纯手动录入，角色卡片识别及上传接口已删除。50张配置卡、150个头像槽和65张表的824行原文长期留存；其中64张表、811个有效端点已进入计算库，绯雪7处配队已更正。原图缺失数据不插值，缺难度的表暂不参与计算。高配行累计继承，未标精炼的“专”按精1；演示库单独保留供验证算法。
 
+## 使用展示
+
+以下截图展示从角色资产录入、计算条件设置到补金建议的使用流程。图中账号配置与计算结果为展示示例，实际结果取决于输入资产、预算和配队数据库。
+
+### 1. 角色资产与结果概览
+
+手动维护角色、共鸣链与专武状态，查看当前 DPS、推荐 DPS 和补金收益。
+
+![角色资产与结果概览](docs/images/01-account-assets.png)
+
+### 2. 计算条件与当前队伍
+
+选择优化目标、预算计算方式、奶位白名单和轴难度，支持按期望抽数或补金数量进行计算。
+
+![计算条件与当前队伍](docs/images/02-optimization-settings.png)
+
+### 3. 推荐队伍与补金路径
+
+展示预算内的最优队伍、逐步升级路径、原图映射出处和 Pareto 前沿。
+
+![推荐队伍与补金路径](docs/images/03-recommended-plan.png)
+
+### 4. 各预算对照与升级收益排行
+
+比较不同金数预算下的推荐队伍、实际使用金数和每金 DPS 收益，并查看升级收益排行。
+
+![各预算对照与升级收益排行](docs/images/04-budget-comparison.png)
+
 ## 本地运行（Windows PowerShell）
 
 在项目根目录执行：
@@ -24,11 +52,23 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
-再打开另一个终端启动前端：
+再打开另一个终端进入前端目录：
 
 ```powershell
 cd frontend
+```
+
+首次运行或依赖变更时，单独安装依赖：
+
+```powershell
 npm.cmd ci
+```
+
+安装前请先停止本项目已运行的 Vite 服务（在对应终端按 `Ctrl+C`）。Windows 会锁住运行中的 `esbuild.exe`，此时执行 `npm ci` 会报 `EPERM`，并可能留下不完整依赖。停止服务后重新执行 `npm.cmd ci` 即可恢复。
+
+依赖安装成功后启动前端；后续日常启动只需执行这一条：
+
+```powershell
 npm.cmd run dev -- --host 127.0.0.1
 ```
 
