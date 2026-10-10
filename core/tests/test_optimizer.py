@@ -129,7 +129,7 @@ def brute_force_optimize(account: dict, database: dict, request_settings: dict) 
     rankings = [
         optimizer_module._with_gain(plan, baseline, cost_mode)
         for plan in sorted(
-            (plan for plan in budgeted if len(plan["actions"]) == 1 and plan["_cost_cents"] > 0),
+            (plan for plan in budgeted if len(plan["actions"]) == 1 and plan["_cost_cents"] > 0 and plan["_dps"] > baseline),
             key=lambda plan: (
                 -(plan["_dps"] - baseline) / optimizer_module.Decimal(plan["_cost_cents"]),
                 -plan["_dps"],
@@ -518,10 +518,9 @@ def test_infeasible_requires_the_exact_requested_number_of_teams() -> None:
     assert result["current"] == {"feasible": False, "total_dps": 0, "teams": []}
     assert result["best"]["feasible"] is False
     assert result["pareto_frontier"] == []
-    # One retained singleton plus its rejected repeated-child state were
-    # actually materialized.  The counter measures states, not a speculative
-    # binomial number of leaves.
-    assert result["explored_combinations"] == 2
+    # The repeated child is rejected by the roster check before a resource
+    # plan is materialized, leaving just the singleton state.
+    assert result["explored_combinations"] == 1
 
 
 def test_search_limit_never_returns_an_approximation() -> None:
@@ -748,3 +747,217 @@ def test_gold_mode_branch_and_bound_matches_exhaustive_oracle() -> None:
 
     assert {key: actual[key] for key in expected} == expected
     assert actual["exact"] is True
+
+
+@pytest.mark.parametrize("cost_mode,budget,costs", [
+    ("gold", 2, [1, 2]), ("pulls", 162.30, [81.15, 162.30]),
+])
+def test_upgrade_path_orders_by_prefix_dps_and_reports_step_relative_gains(cost_mode, budget, costs):
+    def variant(name, a, b, dps):
+        return record(name, "A", [member("A", a), member("B", b), member("C")],
+                      [{"id": name, "difficulty": "中", "dps": dps}])
+    baseline = variant("base", 0, 0, 100)
+    database = db(baseline, variant("a", 1, 0, 110), variant("b", 0, 1, 150), variant("both", 1, 1, 200))
+    result = optimize(account_for([baseline]), database, settings(cost_mode=cost_mode, budget=budget))
+    path = result["upgrade_path"]
+    assert [step["action"]["character"] for step in path] == ["B", "A"]
+    assert [step["total_dps"] for step in path] == [150, 200]
+    assert [step["gain"] for step in path] == [50, 50]
+    assert [step["gain_percent"] for step in path] == [50, 33.3333]
+    assert [step["cumulative_cost"] for step in path] == costs
+    assert [step["gold"] for step in path] == [1, 2]
+    assert path[-1]["teams"] == result["best"]["teams"]
+
+
+def test_upgrade_path_looks_ahead_when_first_gold_is_tied():
+    def variant(name, a, z, dps):
+        return record(name, "Z", [member("A", a), member("Z", z), member("C")],
+                      [{"id": name, "difficulty": "中", "dps": dps}])
+    baseline = variant("base", 0, 0, 100)
+    database = db(baseline, variant("z2", 0, 2, 200), variant("final", 1, 2, 300))
+    result = optimize(account_for([baseline]), database, settings(cost_mode="gold", budget=3))
+    path = result["upgrade_path"]
+    # A is first in the canonical purchase list, but Z's prerequisite unlocks
+    # the second-gold improvement. Compare all three valid purchase orders.
+    assert [step["action"]["character"] for step in path] == ["Z", "Z", "A"]
+    assert [step["total_dps"] for step in path] == [100, 200, 300]
+    assert [step["gain_percent"] for step in path] == [0, 100, 50]
+
+
+def test_upgrade_path_preserves_final_optimum_instead_of_buying_a_greedy_detour():
+    def variant(name, a, z, dps):
+        return record(name, "Z", [member("A", a), member("Z", z), member("C")],
+                      [{"id": name, "difficulty": "中", "dps": dps}])
+    baseline = variant("base", 0, 0, 100)
+    database = db(baseline, variant("tempting", 1, 0, 220), variant("final", 0, 2, 300))
+    result = optimize(account_for([baseline]), database, settings(cost_mode="gold", budget=2))
+    assert result["best"]["total_dps"] == 300
+    assert [step["action"]["character"] for step in result["upgrade_path"]] == ["Z", "Z"]
+    assert [step["total_dps"] for step in result["upgrade_path"]] == [100, 300]
+
+
+@pytest.mark.parametrize("mode,count", [("single", 1), ("two_teams", 2), ("four_teams", 4)])
+def test_upgrade_path_repacks_complete_teams_and_reports_each_team_dps(mode, count):
+    base = team("base", "A", 100)
+    upgrade = record("upgrade", "A", [member("A", 1), *base["members"][1:]],
+                     [{"id": "upgrade", "difficulty": "中", "dps": 150}])
+    other_teams = [team(f"extra-{index}", f"Extra-{index}", 90 - index) for index in range(count - 1)]
+    result = optimize(account_for([base, *other_teams]), db(base, upgrade, *other_teams),
+                      settings(mode=mode, cost_mode="gold", budget=1))
+    step = result["upgrade_path"][0]
+    assert len(step["teams"]) == count
+    assert sum(item["dps"] for item in step["teams"]) == step["total_dps"]
+    assert step["total_dps"] == result["current"]["total_dps"] + 50
+    assert step["teams"] == result["best"]["teams"]
+
+
+def test_upgrade_path_acquisition_and_refinement_requirements_use_real_instances():
+    target = record("target", "A", [member("A", refinement=3), member("B"), member("C")])
+    inventory = account_for([target])
+    inventory["characters"] = [asset for asset in inventory["characters"] if asset["character"] != "A"]
+    inventory["weapons"] = [asset for asset in inventory["weapons"] if asset["weapon"] != "A-weapon"]
+    result = optimize(inventory, db(target), settings(cost_mode="gold", budget=4))
+    path = result["upgrade_path"]
+    assert [step["feasible"] for step in path] == [False, False, False, True]
+    assert [step["total_dps"] for step in path] == [None, None, None, 100]
+    assert all(step["gain_percent"] is None for step in path)
+    weapon_steps = [step for step in path if "weapon" in step["action"]]
+    assert [step["action"]["to_refinement"] for step in weapon_steps] == [1, 2, 3]
+    assert len({step["action"]["instance_id"] for step in weapon_steps}) == 1
+    assert path[-1]["teams"] == result["best"]["teams"]
+
+
+def test_upgrade_path_rechecks_chain_caps_at_intermediate_assets():
+    baseline = record("capped", "A", [member("A", max_chain=0), member("B"), member("C")],
+                      [{"id": "capped", "difficulty": "中", "dps": 200}])
+    fallback = record("fallback", "A", [member("A"), member("B"), member("C")],
+                      [{"id": "fallback", "difficulty": "中", "dps": 100}])
+    target = record("target", "A", [member("A", 2), member("B"), member("C")],
+                    [{"id": "target", "difficulty": "中", "dps": 300}])
+    result = optimize(account_for([baseline]), db(baseline, fallback, target), settings(cost_mode="gold", budget=2))
+    assert [step["total_dps"] for step in result["upgrade_path"]] == [100, 300]
+    assert [step["gain_percent"] for step in result["upgrade_path"]] == [-50, 200]
+
+
+def test_upgrade_rankings_only_include_strictly_positive_dps_gains():
+    baseline = record("base", "A", [member("A"), member("B"), member("C")])
+    variants = [record(name, "A", [member("A", a), member("B", b), member("C", c)],
+                       [{"id": name, "difficulty": "中", "dps": dps}])
+                for name, a, b, c, dps in [("negative", 1, 0, 0, 80), ("zero", 0, 1, 0, 100), ("positive", 0, 0, 1, 120)]]
+    result = optimize(account_for([baseline]), db(baseline, *variants), settings(cost_mode="gold", budget=1))
+    assert [plan["total_dps"] for plan in result["upgrade_rankings"]] == [120]
+    assert all(plan["gain"] > 0 for plan in result["upgrade_rankings"])
+
+
+def test_upgrade_path_does_not_spend_unused_budget_and_is_empty_for_owned_optimum():
+    baseline = team("base", "A", 100)
+    result = optimize(account_for([baseline]), db(baseline), settings(cost_mode="gold", budget=20))
+    assert result["best"]["cost"] == 0
+    assert result["upgrade_path"] == []
+
+
+def test_upgrade_path_search_obeys_the_shared_state_limit():
+    baseline = team("base", "A", 100)
+    upgrade = record("upgrade", "A", [member("A", 1), *baseline["members"][1:]],
+                     [{"id": "upgrade", "difficulty": "中", "dps": 150}])
+    with pytest.raises(SearchLimitError):
+        optimize(account_for([baseline]), db(baseline, upgrade), settings(cost_mode="gold", budget=1, search_limit=2))
+
+
+@pytest.mark.parametrize("mode,count", [("single", 1), ("two_teams", 2), ("four_teams", 4)])
+def test_upgrade_path_matches_exhaustive_purchase_order_oracle(mode, count):
+    from copy import deepcopy
+    from itertools import permutations
+
+    def variant(name, a, b, c, dps):
+        return record(name, "A", [member("A", a), member("B", b), member("C", c)],
+                      [{"id": name, "difficulty": "中", "dps": dps}])
+    baseline = variant("base", 0, 0, 0, 100)
+    extras = [team(f"extra-{index}", f"Extra-{index}", 90 - index) for index in range(count - 1)]
+    database = db(baseline, variant("a", 1, 0, 0, 110), variant("b", 0, 1, 0, 150),
+                  variant("c", 0, 0, 1, 110), variant("ab", 1, 1, 0, 160),
+                  variant("bc", 0, 1, 1, 210), variant("ac", 1, 0, 1, 190),
+                  variant("abc", 1, 1, 1, 300), *extras)
+    inventory = account_for([baseline, *extras])
+    request_settings = settings(mode=mode, cost_mode="gold", budget=3)
+    result = optimize(inventory, database, request_settings)
+    vectors = []
+    for sequence in permutations(result["best"]["actions"]):
+        purchased = deepcopy(inventory)
+        vector = []
+        for action in sequence:
+            for asset in purchased["characters"]:
+                if asset["character"] == action["character"]:
+                    asset["chain"] = action["to_chain"]
+            current = brute_force_optimize(purchased, database, {**request_settings, "budget": 0})["current"]
+            vector.append(current["total_dps"])
+        vectors.append(tuple(vector))
+    assert tuple(step["total_dps"] for step in result["upgrade_path"]) == max(vectors)
+    assert [step["action"]["character"] for step in result["upgrade_path"]] == ["B", "C", "A"]
+
+
+def test_upgrade_path_repeated_healer_needs_an_additional_weapon_instance():
+    first = record("first", "A", [member("A"), member("A2"), member("H")])
+    second = record("second", "B", [member("B"), member("B2"), member("H")])
+    result = optimize(account_for([first, second]), db(first, second),
+                      settings(mode="two_teams", cost_mode="gold", budget=1, repeatable_healers=["H"]))
+    step = result["upgrade_path"][0]
+    assert step["action"]["kind"] == "weapon_acquisition"
+    assert step["total_dps"] == 200
+    assignments = [asset["instance_id"] for row in step["teams"] for asset in row["weapon_assignment"]
+                   if asset["character"] == "H"]
+    assert len(assignments) == len(set(assignments)) == 2
+
+
+def test_cost_summaries_match_full_physical_plans_on_random_inventories():
+    from random import Random
+
+    random = Random(20261010)
+    names = [f"Character-{index}" for index in range(7)]
+    weapon_names = [f"Weapon-{index}" for index in range(3)]
+    for _ in range(250):
+        records = []
+        for index in range(5):
+            members = []
+            for name in random.sample(names, 3):
+                minimum = random.randrange(7)
+                members.append(member(name, minimum, random.choice(weapon_names), random.randrange(1, 6),
+                                      max_chain=random.randrange(minimum, 7)))
+            records.append(record(f"record-{index}", members[0]["character"], members))
+        inventory = {
+            "characters": [{"character": name, "chain": random.randrange(7)}
+                           for name in names if random.randrange(2)],
+            "weapons": [{"id": f"owned-{index}", "weapon": random.choice(weapon_names),
+                         "refinement": random.randrange(1, 6)} for index in range(random.randrange(9))],
+        }
+        normalized_settings = optimizer_module._validate_settings(settings(
+            budget=9999, cost_mode=random.choice(["gold", "pulls"]), repeatable_healers=random.sample(names, 5),
+        ))
+        endpoints = optimizer_module._representative_endpoints(validate_database(db(*records)), normalized_settings)
+        selected = tuple(sorted(random.choices(endpoints, k=random.randrange(1, 5)), key=lambda endpoint: endpoint.source_index))
+        roster = {}
+        for endpoint in selected:
+            roster = optimizer_module._extend_roster(roster, optimizer_module._roster_requirements(endpoint, normalized_settings))
+            if roster is None:
+                break
+        full = optimizer_module._build_plan(selected, inventory, normalized_settings)
+        if roster is None:
+            assert full is None
+            continue
+        summary = optimizer_module._plan_summary(selected, roster, optimizer_module._inventory_requirements(inventory), normalized_settings)
+        assert (summary is None) == (full is None)
+        if summary is not None:
+            assert (summary["_cost_cents"], summary["gold_count"], summary["_dps"], summary["_key"]) == (
+                full["_cost_cents"], len(full["actions"]), full["_dps"], full["_key"],
+            )
+
+
+def test_two_identical_all_whitelisted_teams_keep_distinct_weapon_slots():
+    endpoint = record("repeatable", "A", [member("A"), member("B"), member("C")])
+    result = optimize(account_for([endpoint]), db(endpoint),
+                      settings(mode="two_teams", cost_mode="gold", budget=3, repeatable_healers=["A", "B", "C"]))
+    assert result["best"]["total_dps"] == 200
+    assert len(result["best"]["teams"]) == 2
+    assert result["best"]["cost"] == 3
+    assignments = [item["instance_id"] for row in result["best"]["teams"] for item in row["weapon_assignment"]]
+    assert len(assignments) == len(set(assignments)) == 6

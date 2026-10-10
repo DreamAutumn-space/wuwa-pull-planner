@@ -81,6 +81,10 @@ def test_gold_budget_and_support_character_filter_work_through_http(tmp_path: Pa
         assert result["best"]["cost"] == 1
         assert result["best"]["roi_per_gold"] == 60
         assert result["best"]["teams"][0]["record_id"] == "weapon-upgrade"
+        assert result["upgrade_path"][0]["action"]["kind"] == "weapon_refinement"
+        assert result["upgrade_path"][0]["total_dps"] == 160
+        assert result["upgrade_path"][0]["gain_percent"] == 60
+        assert result["upgrade_path"][0]["teams"] == result["best"]["teams"]
 
 
 def test_fractional_gold_budget_returns_http_validation_error(tmp_path: Path) -> None:
@@ -161,6 +165,114 @@ def test_health_and_explicit_demo_database_are_available(tmp_path: Path) -> None
         assert response.status_code == 200
         assert response.json()["version"] == "test"
         assert response.headers["cache-control"] == "public, max-age=300"
+
+
+def test_example_account_preserves_the_fixed_real_inventory_and_is_separate_from_demo(tmp_path: Path) -> None:
+    source_data = Path(__file__).parents[2] / "data"
+    example = json.loads((source_data / "example-account.json").read_text(encoding="utf-8"))
+    (tmp_path / "example-account.json").write_text(json.dumps(example, ensure_ascii=False), encoding="utf-8")
+    with make_client(tmp_path, lambda *_: {"ok": True}) as client:
+        response = client.get("/api/example-account")
+        assert response.status_code == 200
+        assert response.json() == example
+        assert response.headers["cache-control"] == "no-store"
+        assert client.get("/api/example").json()["account"] == sample_account()
+
+    from app.main import _normalize_api_account
+    assets = _normalize_api_account(example, source_data)
+    assert len(example["characters"]) == 25
+    assert len(assets["weapons"]) == 14
+    assert all(asset["refinement"] == 1 for asset in assets["weapons"])
+
+
+def test_missing_example_account_does_not_substitute_demo_inventory(tmp_path: Path) -> None:
+    with make_client(tmp_path, lambda *_: {"ok": True}) as client:
+        response = client.get("/api/example-account")
+        assert response.status_code == 503
+        assert response.json()["detail"]["code"] == "public_data_unavailable"
+
+
+@pytest.mark.parametrize("standard", ["维里奈", "安可", "卡卡罗", "凌阳", "鉴心"])
+def test_team_gold_uses_each_row_configuration_and_excludes_standard_assets(standard):
+    from app.main import _with_team_gold
+
+    source_data = Path(__file__).parents[2] / "data"
+    current_team = {"dps": 20, "members": [
+        {"character": "今汐", "chain": 2, "weapon": "时和岁稔", "refinement": 1},
+        {"character": standard, "chain": 6, "weapon": "千古洑流", "refinement": 5},
+        {"character": "漂泊者·气动", "chain": 6, "weapon": "表内常驻·漂泊者·气动", "refinement": 1},
+    ]}
+    best_team = {"dps": 36, "members": [
+        {"character": "今汐", "chain": 6, "weapon": "时和岁稔", "refinement": 5},
+        *current_team["members"][1:],
+    ]}
+    result = _with_team_gold({"current": {"teams": [current_team]}, "best": {"teams": [best_team]},
+                              "upgrade_path": [{"teams": [best_team]}]}, source_data)
+    assert result["current"]["teams"][0]["gold_count"] == 4
+    assert result["current"]["teams"][0]["dps_per_gold"] == 5
+    assert result["best"]["teams"][0]["gold_count"] == 12
+    assert result["best"]["teams"][0]["dps_per_gold"] == 3
+    assert result["upgrade_path"][-1]["teams"] == result["best"]["teams"]
+    assert "gold_count" not in current_team
+
+
+def test_team_gold_counts_up_weapons_on_standard_characters_and_each_repeated_slot():
+    from app.main import _with_team_gold
+
+    source_data = Path(__file__).parents[2] / "data"
+    team = {"dps": 20, "members": [
+        {"character": "守岸人", "chain": 0, "weapon": "星序协响", "refinement": 1},
+        {"character": "维里奈", "chain": 6, "weapon": "星序协响", "refinement": 1},
+        {"character": "白芷", "chain": 6, "weapon": "星序协响", "refinement": 1},
+    ]}
+    result = _with_team_gold({"current": {"teams": [team]}}, source_data)
+    assert result["current"]["teams"][0]["gold_count"] == 4
+    assert result["current"]["teams"][0]["dps_per_gold"] == 5
+
+
+@pytest.mark.parametrize("count_up", [True, False])
+def test_team_gold_is_returned_for_current_and_best_and_handles_zero_denominator(tmp_path, count_up):
+    current_team = {"dps": 100, "members": sample_database()["records"][0]["members"]}
+    best_team = json.loads(json.dumps(current_team))
+    best_team["members"][0]["chain"] = 2
+    best_team["dps"] = 180
+    with make_client(tmp_path, lambda *_: {"current": {"teams": [current_team]}, "best": {"teams": [best_team]}}) as client:
+        write_signature_catalog(tmp_path, [{
+            "character": "Jinhsi", "rarity": 5, "is_limited": count_up, "signature_weapon": "Test weapon",
+        }])
+        response = client.post("/api/optimize", json={"account": sample_account(), "settings": sample_settings()})
+    assert response.status_code == 200
+    result = response.json()
+    assert "account_gold" not in result
+    assert result["current"]["teams"][0]["gold_count"] == (4 if count_up else 0)
+    assert result["current"]["teams"][0]["dps_per_gold"] == (25 if count_up else None)
+    assert result["best"]["teams"][0]["gold_count"] == (6 if count_up else 0)
+    assert result["best"]["teams"][0]["dps_per_gold"] == (30 if count_up else None)
+
+
+@pytest.mark.parametrize("difficulty,expected_dps", [("中", 72.85), ("高", 75.86)])
+def test_nine_gold_example_four_teams_completes_with_default_server_limits(difficulty, expected_dps):
+    source_data = Path(__file__).parents[2] / "data"
+    example = json.loads((source_data / "example-account.json").read_text(encoding="utf-8"))
+    with TestClient(create_app(data_dir=source_data, config=RuntimeConfig(), use_process_pool=False)) as client:
+        response = client.post("/api/optimize", json={
+            "account": example,
+            "settings": {"mode": "four_teams", "cost_mode": "gold", "budget": 9, "max_difficulty": difficulty},
+        })
+    assert response.status_code == 200
+    result = response.json()
+    assert result["exact"] is True
+    assert result["explored_combinations"] < 250_000
+    assert result["best"]["total_dps"] == expected_dps
+    assert result["best"]["cost"] == 9
+    assert len(result["best"]["teams"]) == 4
+    assert len(result["upgrade_path"]) == 9
+    assert result["upgrade_path"][-1]["total_dps"] == expected_dps
+    assert result["upgrade_path"][-1]["teams"] == result["best"]["teams"]
+    assert "account_gold" not in result
+    for team in result["current"]["teams"] + result["best"]["teams"]:
+        assert team["gold_count"] > 0
+        assert team["dps_per_gold"] == pytest.approx(team["dps"] / team["gold_count"])
 
 
 def test_default_database_and_optimize_use_reference_while_demo_is_separate(tmp_path: Path) -> None:

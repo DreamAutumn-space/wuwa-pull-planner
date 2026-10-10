@@ -386,6 +386,41 @@ def _normalize_api_account(account: dict[str, Any], data_dir: Path) -> dict[str,
         raise _exception_response(exc) from exc
 
 
+def _with_team_gold(result: dict[str, Any], data_dir: Path) -> dict[str, Any]:
+    """Add each displayed configuration's UP copy count and DPS per gold."""
+    if not (data_dir / "signature-weapons.json").is_file():
+        return result
+    catalog = _read_public_json(data_dir, "signature-weapons.json")
+    excluded = {"维里奈", "安可", "卡卡罗", "凌阳", "鉴心", *NON_GACHA_CHARACTERS}
+    entries = [entry for entry in catalog["characters"]
+               if entry.get("rarity") == 5 and entry.get("is_limited") is True
+               and entry["character"] not in excluded and not entry.get("demo_only")]
+    characters = {entry["character"] for entry in entries}
+    weapons = {entry["signature_weapon"] for entry in entries if entry.get("signature_weapon")}
+
+    def annotate_plan(plan: dict[str, Any]) -> dict[str, Any]:
+        if not isinstance(plan.get("teams"), list):
+            return plan
+        teams = []
+        for team in plan["teams"]:
+            gold = sum(
+                (member["chain"] + 1 if member["character"] in characters else 0)
+                + (member["refinement"] if member["weapon"] in weapons else 0)
+                for member in team["members"]
+            )
+            teams.append({**team, "gold_count": gold, "dps_per_gold": team["dps"] / gold if gold > 0 else None})
+        return {**plan, "teams": teams}
+
+    enriched = dict(result)
+    for key in ("current", "best"):
+        if isinstance(result.get(key), dict):
+            enriched[key] = annotate_plan(result[key])
+    for key in ("pareto_frontier", "upgrade_rankings", "upgrade_path"):
+        if isinstance(result.get(key), list):
+            enriched[key] = [annotate_plan(plan) for plan in result[key]]
+    return enriched
+
+
 def _metadata_mapping(database: Mapping[str, Any]) -> Mapping[str, Any] | None:
     metadata = database.get("metadata")
     if metadata is None:
@@ -714,6 +749,13 @@ def create_app(
             headers={"Cache-Control": "public, max-age=300"},
         )
 
+    @application.get("/api/example-account")
+    async def example_account() -> Response:
+        return JSONResponse(
+            _read_public_json(public_data_dir, "example-account.json"),
+            headers={"Cache-Control": "no-store"},
+        )
+
     @application.get("/api/catalog")
     async def public_catalog() -> Response:
         catalog = _read_public_json(public_data_dir, "signature-weapons.json")
@@ -842,6 +884,7 @@ def create_app(
 
             try:
                 result = await asyncio.wait_for(asyncio.shield(future), timeout=runtime_config.optimizer_timeout_seconds)
+                result = _with_team_gold(result, public_data_dir)
                 if database_coverage_note is not None:
                     result = {**result, "database_coverage_note": database_coverage_note}
                 return result

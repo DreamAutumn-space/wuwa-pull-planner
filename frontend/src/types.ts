@@ -272,6 +272,8 @@ export interface ResultTeam {
   rotation_id: string
   difficulty: Difficulty
   dps: number
+  gold_count?: number
+  dps_per_gold?: number | null
   weapon_assignment?: Record<string, string> | Array<Record<string, unknown>>
 }
 
@@ -293,8 +295,21 @@ export interface OptimizeResponse {
   best: Plan
   cost_mode?: CostMode
   pareto_frontier?: Plan[]
-  upgrade_rankings?: unknown[]
+  upgrade_rankings?: Plan[]
+  upgrade_path?: UpgradeStep[]
   exact?: boolean
   explored_combinations?: number
   [key: string]: unknown
+}
+
+export interface UpgradeStep {
+  gold: number
+  action: unknown
+  cumulative_cost: number
+  feasible: boolean
+  total_dps: number | null
+  teams: ResultTeam[]
+  gain: number | null
+  /** Relative to the optimal complete team set immediately before this gold. */
+  gain_percent: number | null
 }

@@ -15,8 +15,10 @@ while each of its weapon slots needs a distinct physical weapon instance.
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from copy import deepcopy
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
+from functools import lru_cache
 from math import isfinite
 from typing import Any, Iterable
 
@@ -793,6 +795,224 @@ class _SearchCounter:
             )
 
 
+def _roster_requirements(endpoint: _Endpoint, settings: dict[str, Any]) -> tuple[tuple[str, int, int, int], ...]:
+    return tuple(
+        (member["character"], member["chain"], member["max_chain"],
+         settings["healer_capacity"] if member["character"] in settings["repeatable_healers"] else 1)
+        for member in endpoint.record["members"]
+    )
+
+
+def _extend_roster(
+    roster: dict[str, tuple[int, int, int]], requirements: tuple[tuple[str, int, int, int], ...]
+) -> dict[str, tuple[int, int, int]] | None:
+    """Reject character conflicts before materializing weapon/cost plans."""
+    updates = {}
+    for name, minimum, maximum, capacity in requirements:
+        previous = roster.get(name)
+        uses = 1
+        if previous is not None:
+            uses = previous[0] + 1
+            minimum = max(minimum, previous[1])
+            maximum = min(maximum, previous[2])
+        if uses > capacity or minimum > maximum:
+            return None
+        updates[name] = (uses, minimum, maximum)
+    return {**roster, **updates}
+
+
+def _inventory_requirements(account: dict[str, Any]) -> tuple[dict[str, int], dict[str, tuple[int, ...]]]:
+    weapons: dict[str, list[int]] = defaultdict(list)
+    for instance in account["weapons"]:
+        weapons[instance["weapon"]].append(instance["refinement"])
+    return (
+        {item["character"]: item["chain"] for item in account["characters"]},
+        {name: tuple(sorted(ranks, reverse=True)) for name, ranks in weapons.items()},
+    )
+
+
+def _plan_summary(
+    endpoints: tuple[_Endpoint, ...], roster: dict[str, tuple[int, int, int]],
+    inventory: tuple[dict[str, int], dict[str, tuple[int, ...]]], settings: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Exact cost without constructing actions or physical assignments.
+
+    For each weapon name, the same matching rule as _assign_weapons saves
+    min(owned rank, required rank) copies by pairing the highest ranks. Only
+    returned plans need the full physical-instance assignment and action list.
+    """
+    owned_chains, owned_weapons = inventory
+    character_count = 0
+    for name, (_, minimum, maximum) in roster.items():
+        current = owned_chains.get(name, -1)
+        if max(current, minimum) > maximum:
+            return None
+        character_count += max(0, minimum - current)
+    required_weapons: dict[str, list[int]] = defaultdict(list)
+    for endpoint in endpoints:
+        for member in endpoint.record["members"]:
+            required_weapons[member["weapon"]].append(member["refinement"])
+    weapon_count = 0
+    for name, ranks in required_weapons.items():
+        required = sorted(ranks, reverse=True)
+        saved = sum(min(need, owned) for need, owned in zip(required, owned_weapons.get(name, ())))
+        weapon_count += sum(required) - saved
+    cost = (
+        character_count * _action_cost_cents(settings["cost_mode"], "character")
+        + weapon_count * _action_cost_cents(settings["cost_mode"], "weapon")
+    )
+    dps = sum((endpoint.dps for endpoint in endpoints), Decimal("0"))
+    return {
+        "_dps": dps,
+        "_cost_cents": cost,
+        "_key": tuple(endpoint.source_index for endpoint in endpoints),
+        "gold_count": character_count + weapon_count,
+    }
+
+
+def _best_owned_plan(
+    endpoints: list[_Endpoint], account: dict[str, Any], settings: dict[str, Any], counter: _SearchCounter
+) -> dict[str, Any] | None:
+    """Repack the requested full team set using only the assets now owned."""
+    inventory = _inventory_requirements(account)
+    available = []
+    for endpoint in endpoints:
+        counter.visit()
+        roster = _extend_roster({}, _roster_requirements(endpoint, settings))
+        plan = _plan_summary((endpoint,), roster, inventory, settings)
+        if plan is not None and plan["_cost_cents"] == 0:
+            available.append((endpoint, plan))
+    available.sort(key=lambda item: (-item[0].dps, item[0].source_index))
+    rosters = [_roster_requirements(endpoint, settings) for endpoint, _ in available]
+    count = _team_count(settings["mode"])
+    best = None
+
+    def search(
+        selected: tuple[_Endpoint, ...], start: int, plan: dict[str, Any], roster: dict[str, tuple[int, int, int]]
+    ) -> None:
+        nonlocal best
+        remaining = count - len(selected)
+        if not remaining:
+            if _better_current(plan, best):
+                best = plan
+            return
+        for index in range(start, len(available)):
+            # Later endpoints have no higher DPS. This bound is safe even if
+            # the same endpoint cannot actually fill all remaining slots.
+            if best is not None and plan["_dps"] + available[index][0].dps * remaining < best["_dps"]:
+                break
+            child_roster = _extend_roster(roster, rosters[index])
+            if child_roster is None:
+                continue
+            counter.visit()
+            child = tuple(sorted((*selected, available[index][0]), key=lambda item: item.source_index))
+            child_plan = _plan_summary(child, child_roster, inventory, settings)
+            if child_plan is not None and child_plan["_cost_cents"] == 0:
+                search(child, index, child_plan, child_roster)
+
+    for index, (endpoint, plan) in enumerate(available):
+        search((endpoint,), index, plan, _extend_roster({}, rosters[index]))
+    if best is None:
+        return None
+    by_index = {endpoint.source_index: endpoint for endpoint in endpoints}
+    return _build_plan(tuple(by_index[index] for index in best["_key"]), account, settings)
+
+
+def _optimal_upgrade_path(
+    account: dict[str, Any], endpoints: list[_Endpoint], settings: dict[str, Any],
+    best: dict[str, Any], current: dict[str, Any] | None, counter: _SearchCounter,
+) -> list[dict[str, Any]]:
+    """Maximize the prefix DPS vector among prerequisite-valid final purchases.
+
+    Final purchases are fixed by the exact budget winner. Equal immediate DPS
+    is resolved by looking ahead, so a zero-gain prerequisite can precede an
+    unrelated upgrade. Every prefix is evaluated with a fresh full-team packing.
+    """
+    groups: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for action in best["actions"]:
+        key = ("character", action["character"]) if "character" in action else ("weapon", action["instance_id"])
+        groups.setdefault(key, []).append(action)
+    purchases = list(groups.values())
+    if not purchases:
+        return []
+    initial = (0,) * len(purchases)
+    final = tuple(len(group) for group in purchases)
+
+    @lru_cache(maxsize=None)
+    def evaluate(state: tuple[int, ...]) -> dict[str, Any] | None:
+        if state == initial:
+            return current
+        inventory = deepcopy(account)
+        characters = {item["character"]: item for item in inventory["characters"]}
+        weapons = {item["id"]: item for item in inventory["weapons"]}
+        for group, progress in zip(purchases, state):
+            if not progress:
+                continue
+            action = group[progress - 1]
+            if "character" in action:
+                name = action["character"]
+                if name not in characters:
+                    characters[name] = {"character": name, "chain": action["to_chain"]}
+                    inventory["characters"].append(characters[name])
+                characters[name]["chain"] = action["to_chain"]
+            else:
+                instance_id = action["instance_id"]
+                if instance_id not in weapons:
+                    weapons[instance_id] = {"id": instance_id, "weapon": action["weapon"], "refinement": action["to_refinement"]}
+                    inventory["weapons"].append(weapons[instance_id])
+                weapons[instance_id]["refinement"] = action["to_refinement"]
+        return _best_owned_plan(endpoints, inventory, settings, counter)
+
+    @lru_cache(maxsize=None)
+    def order(state: tuple[int, ...]) -> tuple[tuple[Decimal, ...], tuple[int, ...]]:
+        if state == final:
+            return (), ()
+        candidates = []
+        for index, progress in enumerate(state):
+            if progress == final[index]:
+                continue
+            child = (*state[:index], progress + 1, *state[index + 1:])
+            plan = evaluate(child)
+            score = plan["_dps"] if plan is not None else Decimal("-1")
+            candidates.append((score, index, child))
+        highest = max(item[0] for item in candidates)
+        winner = None
+        for score, index, child in candidates:
+            if score != highest:
+                continue
+            suffix_scores, suffix_order = order(child)
+            candidate = ((score, *suffix_scores), (index, *suffix_order))
+            if winner is None or candidate[0] > winner[0]:
+                winner = candidate
+        assert winner is not None
+        return winner
+
+    _, sequence = order(initial)
+    state = initial
+    previous = current
+    cost_cents = 0
+    steps = []
+    for number, index in enumerate(sequence, 1):
+        action = purchases[index][state[index]]
+        state = (*state[:index], state[index] + 1, *state[index + 1:])
+        plan = evaluate(state)
+        cost_cents += _action_cost_cents(settings["cost_mode"], "character" if "character" in action else "weapon")
+        gain = plan["_dps"] - previous["_dps"] if plan is not None and previous is not None else None
+        steps.append({
+            "gold": number,
+            "action": dict(action),
+            "cumulative_cost": _cost_from_cents(cost_cents),
+            "feasible": plan is not None,
+            "total_dps": plan["total_dps"] if plan is not None else None,
+            "teams": plan["teams"] if plan is not None else [],
+            "gain": _json_number(gain) if gain is not None else None,
+            "gain_percent": float((gain * 100 / previous["_dps"]).quantize(Decimal("0.0001")))
+                if gain is not None and previous["_dps"] > 0 else None,
+        })
+        previous = plan
+    return steps
+
+
 def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[str, Any]) -> dict[str, Any]:
     """Return exact current, budgeted-best, and Pareto endpoint plans.
 
@@ -811,6 +1031,7 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
     pareto_internal: list[dict[str, Any]] = []
     one_action_plans: list[dict[str, Any]] = []
     counter = _SearchCounter(normalized_settings["search_limit"])
+    inventory = _inventory_requirements(normalized_account)
 
     # A selected set can only add requirements to a one-team endpoint: deleting
     # the other slots from any feasible multi-team solution leaves a feasible
@@ -821,7 +1042,8 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
     candidates: list[tuple[_Endpoint, dict[str, Any]]] = []
     for endpoint in endpoints:
         counter.visit()
-        plan = _build_plan((endpoint,), normalized_account, normalized_settings)
+        roster = _extend_roster({}, _roster_requirements(endpoint, normalized_settings))
+        plan = _plan_summary((endpoint,), roster, inventory, normalized_settings)
         if plan is not None and plan["_cost_cents"] <= normalized_settings["budget_cents"]:
             candidates.append((endpoint, plan))
 
@@ -830,6 +1052,11 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
     # source order so public keys, action order, and team order retain their
     # established semantics.
     candidates.sort(key=lambda item: (-item[0].dps, item[0].source_index))
+    rosters = [_roster_requirements(endpoint, normalized_settings) for endpoint, _ in candidates]
+    ranking_cost_limit = max(
+        _action_cost_cents(normalized_settings["cost_mode"], "character"),
+        _action_cost_cents(normalized_settings["cost_mode"], "weapon"),
+    )
 
     def record_complete_plan(plan: dict[str, Any]) -> None:
         nonlocal current_internal, best_internal
@@ -839,11 +1066,12 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
             if _better_best(plan, best_internal):
                 best_internal = plan
             _insert_pareto(pareto_internal, plan)
-            if len(plan["actions"]) == 1 and plan["_cost_cents"] > 0:
+            if plan["gold_count"] == 1 and plan["_cost_cents"] > 0:
                 one_action_plans.append(plan)
 
     def search(
-        selected: tuple[_Endpoint, ...], start_index: int, partial_plan: dict[str, Any]
+        selected: tuple[_Endpoint, ...], start_index: int, partial_plan: dict[str, Any],
+        roster: dict[str, tuple[int, int, int]],
     ) -> None:
         selected_count = len(selected)
         if selected_count == team_count:
@@ -851,41 +1079,40 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
             return
 
         remaining = team_count - selected_count
-        # Candidates are descending by DPS, and later positions may be reused.
-        # The first permitted candidate is consequently an upper bound for
-        # every remaining team slot.
-        upper_dps = partial_plan["_dps"] + candidates[start_index][0].dps * remaining
-
-        # A dominated branch cannot contribute to current/best/the Pareto set.
-        # Keep branches that may produce a one-action ranking: that public list
-        # intentionally includes dominated plans and must remain exact too.
-        if (
-            # Preserve every one-action plan for the separately exposed
-            # upgrade ranking.  In gold mode both kinds cost one gold; in
-            # pull mode a character and a weapon action have different costs.
-            partial_plan["_cost_cents"]
-            > max(
-                _action_cost_cents(normalized_settings["cost_mode"], "character"),
-                _action_cost_cents(normalized_settings["cost_mode"], "weapon"),
-            )
-            and _strictly_dominates_upper_bound(pareto_internal, partial_plan["_cost_cents"], upper_dps)
-        ):
-            return
-
         for candidate_index in range(start_index, len(candidates)):
-            counter.visit()
             endpoint = candidates[candidate_index][0]
+            upper_dps = partial_plan["_dps"] + endpoint.dps * remaining
+            # This shrinking bound applies to every remaining loop entry.
+            # Preserve one-action candidates for the separate ROI ranking.
+            if (
+                partial_plan["_cost_cents"] > ranking_cost_limit
+                and _strictly_dominates_upper_bound(pareto_internal, partial_plan["_cost_cents"], upper_dps)
+            ):
+                break
+            child_roster = _extend_roster(roster, rosters[candidate_index])
+            if child_roster is None:
+                continue
+            counter.visit()
             child = tuple(sorted((*selected, endpoint), key=lambda item: item.source_index))
-            child_plan = _build_plan(child, normalized_account, normalized_settings)
+            child_plan = _plan_summary(child, child_roster, inventory, normalized_settings)
             if child_plan is None or child_plan["_cost_cents"] > normalized_settings["budget_cents"]:
                 continue
-            search(child, candidate_index, child_plan)
+            search(child, candidate_index, child_plan, child_roster)
 
     for candidate_index, (endpoint, singleton_plan) in enumerate(candidates):
         # The singleton was materialized by the bounded prefilter above, so do
         # not charge it against the state counter a second time.
-        search((endpoint,), candidate_index, singleton_plan)
+        search((endpoint,), candidate_index, singleton_plan, _extend_roster({}, rosters[candidate_index]))
 
+    by_index = {endpoint.source_index: endpoint for endpoint in endpoints}
+
+    def materialize(plan: dict[str, Any]) -> dict[str, Any]:
+        result = _build_plan(tuple(by_index[index] for index in plan["_key"]), normalized_account, normalized_settings)
+        assert result is not None
+        return result
+
+    current_internal = materialize(current_internal) if current_internal is not None else None
+    best_internal = materialize(best_internal) if best_internal is not None else None
     baseline = current_internal["_dps"] if current_internal is not None else Decimal("0")
     if current_internal is None:
         current = {"feasible": False, "total_dps": 0, "teams": []}
@@ -898,11 +1125,11 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
     cost_mode = normalized_settings["cost_mode"]
     best = _empty_plan(cost_mode) if best_internal is None else _with_gain(best_internal, baseline, cost_mode)
     frontier_internal = _pareto(pareto_internal)
-    pareto_frontier = [_with_gain(plan, baseline, cost_mode) for plan in frontier_internal]
+    pareto_frontier = [_with_gain(materialize(plan), baseline, cost_mode) for plan in frontier_internal]
     upgrade_rankings = [
-        _with_gain(plan, baseline, cost_mode)
+        _with_gain(materialize(plan), baseline, cost_mode)
         for plan in sorted(
-            one_action_plans,
+            (plan for plan in one_action_plans if plan["_dps"] > baseline),
             key=lambda plan: (
                 -(plan["_dps"] - baseline) / Decimal(plan["_cost_cents"]),
                 -plan["_dps"],
@@ -911,12 +1138,20 @@ def optimize(account: dict[str, Any], database: dict[str, Any], settings: dict[s
             ),
         )
     ]
+    upgrade_path = (
+        _optimal_upgrade_path(
+            normalized_account, [endpoint for endpoint, _ in candidates], normalized_settings,
+            best_internal, current_internal, counter,
+        )
+        if best_internal is not None else []
+    )
     return {
         "cost_mode": cost_mode,
         "current": current,
         "best": best,
         "pareto_frontier": pareto_frontier,
         "upgrade_rankings": upgrade_rankings,
+        "upgrade_path": upgrade_path,
         "explored_combinations": counter.visited,
         "exact": True,
     }

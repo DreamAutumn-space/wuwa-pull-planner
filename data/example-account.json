@@ -1,0 +1,130 @@
+{
+  "characters": [
+    {
+      "character": "秧秧·玄翎",
+      "chain": 1,
+      "signature_refinement": 1
+    },
+    {
+      "character": "琳奈",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "千咲",
+      "chain": 1,
+      "signature_refinement": 1
+    },
+    {
+      "character": "菲比",
+      "chain": 0,
+      "signature_refinement": 0
+    },
+    {
+      "character": "守岸人",
+      "chain": 0,
+      "signature_refinement": 0
+    },
+    {
+      "character": "维里奈",
+      "chain": 4,
+      "signature_refinement": 0
+    },
+    {
+      "character": "尤诺",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "卡提希娅",
+      "chain": 2,
+      "signature_refinement": 1
+    },
+    {
+      "character": "夏空",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "忌炎",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "心",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "丽贝卡",
+      "chain": 0,
+      "signature_refinement": 0
+    },
+    {
+      "character": "今汐",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "达妮娅",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "爱弥斯",
+      "chain": 3,
+      "signature_refinement": 1
+    },
+    {
+      "character": "长离",
+      "chain": 0,
+      "signature_refinement": 0
+    },
+    {
+      "character": "安可",
+      "chain": 0,
+      "signature_refinement": 0
+    },
+    {
+      "character": "穗穗",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "珂莱塔",
+      "chain": 0,
+      "signature_refinement": 1
+    },
+    {
+      "character": "折枝",
+      "chain": 1,
+      "signature_refinement": 1
+    },
+    {
+      "character": "漂泊者·气动",
+      "chain": 6,
+      "signature_refinement": 0
+    },
+    {
+      "character": "鉴心",
+      "chain": 3,
+      "signature_refinement": 0
+    },
+    {
+      "character": "相里要",
+      "chain": 0,
+      "signature_refinement": 0
+    },
+    {
+      "character": "凌阳",
+      "chain": 3,
+      "signature_refinement": 0
+    },
+    {
+      "character": "卡卡罗",
+      "chain": 1,
+      "signature_refinement": 0
+    }
+  ],
+  "assume_four_stars": true
+}

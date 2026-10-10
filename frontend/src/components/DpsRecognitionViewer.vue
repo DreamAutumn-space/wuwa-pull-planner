@@ -113,7 +113,6 @@ const selectedIndex = computed(() => filteredPanels.value.findIndex((panel) => p
 const selectedNotes = computed(() => selectedPanel.value?.notes?.map((note) => note.text).filter(Boolean) ?? [])
 const readingOrderText = computed(() => props.document.raw_ocr?.reading_order_text?.trim() ?? '')
 const reviewedTables = computed(() => selectedPanel.value?.manual_review?.tables ?? [])
-const unitNote = computed(() => props.document.manual_review?.unit_note?.trim() || '保留原图读数，单位未明示，未乘以 10000。')
 const mappedPanelIds = computed(() => new Set((props.coverage?.mapped_table_ids ?? []).map(id => id.split('/')[0])))
 const selectedMappingStatus = computed(() => selectedPanel.value && mappedPanelIds.value.has(selectedPanel.value.id)
   ? '含已接入的配置；排除项不参与计算' : '仅供资料查阅')
@@ -491,7 +490,7 @@ function avatarCropStyle(character: DpsRecognitionCharacter): CSSProperties {
       <details class="recognition-table-section">
         <summary>查看自动识别原文（含未修正结果）</summary>
         <h3 id="recognition-table-heading">OCR 原文</h3>
-        <p class="muted">仅展示 OCR 原始单元格文字；符号、百分号和星号均保持原样，不能视为已校正数值。{{ unitNote }}</p>
+        <p class="muted">仅展示 OCR 原始单元格文字；符号、百分号和星号均保持原样，不能视为已校正数值。</p>
 
         <div v-if="selectedRows.length" class="scroll-table recognition-table">
           <table>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
-import { getCharacterCatalog, getDemoDatabase, getDpsRecognition, getExample, getHealth, getPortraitAtlas, getPublicDatabase, getReferenceDps, optimize } from './api'
+import { getCharacterCatalog, getDemoDatabase, getDpsRecognition, getExample, getExampleAccount, getHealth, getPortraitAtlas, getPublicDatabase, getReferenceDps, optimize } from './api'
 import { DIFFICULTIES, MODES, type Account, type CharacterCatalog, type CostMode, type Database, type Difficulty, type DpsRecognitionDocument, type LegacyAccount, type OptimizeRequest, type OptimizeResponse, type OptimizeSettings, type Plan, type PortraitAtlas, type ReferenceDps, type ReferenceSection } from './types'
 import CharacterSelect from './components/CharacterSelect.vue'
 import DpsRecognitionViewer from './components/DpsRecognitionViewer.vue'
@@ -117,10 +117,11 @@ const customDatabaseText = ref('')
 const useCustomDatabase = ref(false)
 const customDatabaseError = ref('')
 const result = ref<OptimizeResponse | null>(null)
-const resultBudget = ref<number | null>(null)
+const resultSettings = ref<OptimizeSettings | null>(null)
 const resultDatabase = ref<Database | null>(null)
 const resultSource = ref<'public' | 'custom' | 'demo' | null>(null)
 const busy = ref(false)
+const loadingExampleAccount = ref(false)
 const notice = ref('')
 const error = ref('')
 const jsonFileInput = ref<HTMLInputElement | null>(null)
@@ -168,7 +169,7 @@ function saveLocal(key: string, value: unknown): void {
 
 function clearOptimizationResult(): void {
   result.value = null
-  resultBudget.value = null
+  resultSettings.value = null
   resultDatabase.value = null
   resultSource.value = null
 }
@@ -181,7 +182,6 @@ watch(account, () => {
 watch(settings, () => {
   inputRevision += 1
   saveLocal(STORAGE_SETTINGS, settings)
-  clearOptimizationResult()
 }, { deep: true })
 
 watch(() => settings.cost_mode, (mode) => {
@@ -261,22 +261,28 @@ const activeLibraryNotice = computed(() => {
   if (activeDatabase) return `当前公共库：${activeDatabase.version}。`
   return '公共参考库正在加载。'
 })
-const dpsUnitNote = computed(() => {
-  const metadata = activeDatabaseForResults.value?.metadata
-  if (metadata?.unit === 'source_numeric') {
-    const sourceRule = '沿用原图全队读数，单位未明示；条件表采用全队0层，不乘10000。'
-    const note = typeof metadata.unit_note === 'string' ? metadata.unit_note.trim() : ''
-    return note || sourceRule
-  }
-  if (typeof metadata?.unit_note === 'string' && metadata.unit_note.trim()) return metadata.unit_note
-  return customDatabase.value
-    ? '本次结果使用自定义覆盖库；数值单位以该库说明为准。'
-    : 'DPS 数值单位以当前公共库说明为准。'
-})
 const resultUsesSourceNumeric = computed(() => activeDatabaseForResults.value?.metadata?.unit === 'source_numeric')
 const resultCostMode = computed<CostMode>(() => result.value?.cost_mode === 'gold' ? 'gold' : 'pulls')
 const resultCostLabel = computed(() => resultCostMode.value === 'gold' ? '补金数量' : '期望成本')
 const resultRoiLabel = computed(() => resultCostMode.value === 'gold' ? '每金 DPS 收益' : '每 100 抽 DPS 收益')
+const positiveUpgradeRankings = computed(() => (result.value?.upgrade_rankings ?? [])
+  .filter((plan) => typeof plan.gain === 'number' && plan.gain > 0))
+const upgradeSummary = computed(() => {
+  const response = result.value
+  if (!response?.best.feasible) return null
+  const steps = response.upgrade_path ?? []
+  const gain = response.current.feasible && typeof response.best.gain === 'number'
+    ? response.best.gain : null
+  return {
+    order: steps.length
+      ? steps.map((step) => `第 ${step.gold} 金：${actionText(step.action)}`).join(' → ')
+      : '无需补金',
+    goldCount: steps.length,
+    gain,
+    averageGain: gain === null ? null : steps.length ? gain / steps.length : 0,
+    gainPercent: response.current.feasible ? response.best.gain_percent : null,
+  }
+})
 
 const visibleCharacters = computed(() => account.characters.filter((row) => !FOUR_STAR_SET.has(row.character.trim())))
 const catalogOptions = computed(() => (catalog.value?.characters ?? [])
@@ -475,6 +481,28 @@ function jumpToReferenceSection(section: ReferenceSection): void {
   viewport.scrollTo({ top: Math.max(0, target - 18), behavior: 'smooth' })
 }
 
+async function useExampleAccount(): Promise<void> {
+  error.value = ''
+  notice.value = ''
+  loadingExampleAccount.value = true
+  const revisionAtStart = inputRevision
+  try {
+    const example = parseNewAccount(await getExampleAccount())
+    if (!example) throw new Error('示例账号 JSON 格式无效。')
+    if (revisionAtStart !== inputRevision) {
+      notice.value = '加载期间输入已变更，未替换当前账号资产。'
+      return
+    }
+    account.characters = example.characters
+    assetsExpanded.value = true
+    notice.value = `已使用示例配置：${example.characters.length} 名角色，${example.characters.filter((row) => row.signature_refinement > 0).length} 把专武。可继续修改资产并点击“开始优化”。`
+  } catch (caught) {
+    error.value = `载入示例失败：${readableError(caught)}`
+  } finally {
+    loadingExampleAccount.value = false
+  }
+}
+
 async function loadExample(): Promise<void> {
   error.value = ''
   notice.value = ''
@@ -502,7 +530,7 @@ async function loadExample(): Promise<void> {
       return
     }
     result.value = response
-    resultBudget.value = demoSettings.budget
+    resultSettings.value = payload.settings
     resultDatabase.value = demoDatabase
     resultSource.value = 'demo'
     notice.value = '演示优化已完成：使用示例账号、期望抽数预算和演示库；你的账号、偏好与自定义库均未改动。'
@@ -613,11 +641,11 @@ async function runOptimize(): Promise<void> {
   try {
     const response = await optimize(payload)
     if (revisionAtStart !== inputRevision) {
-      notice.value = '账号或计算条件在搜索期间已变更，已丢弃旧结果。请重新计算。'
+      notice.value = '账号或计算条件在搜索期间已变更，本次响应未应用。请重新计算。'
       return
     }
     result.value = response
-    resultBudget.value = requestSettings.budget
+    resultSettings.value = payload.settings
     resultDatabase.value = databaseAtStart
     resultSource.value = sourceAtStart
     notice.value = response.exact === false
@@ -763,40 +791,6 @@ function rankingStats(item: unknown): string {
   return `${costMode === 'gold' ? '补金数量' : '期望成本'} ${formatPlanCost(plan.cost, costMode)} · DPS ${signedDps(plan.gain, 0)} · ${roiLabel} ${dpsNumber(planRoi(plan, costMode), 1)} DPS`
 }
 
-function planActionSummary(plan: Plan): string {
-  if (!plan.actions?.length) return '当前资产'
-  return plan.actions.map((action) => actionText(action, 'gold')).join(' → ')
-}
-
-interface GoldBudgetComparisonRow {
-  budget: number
-  plan: Plan | null
-}
-
-const goldBudgetComparison = computed<GoldBudgetComparisonRow[]>(() => {
-  const response = result.value
-  const budget = resultBudget.value
-  if (!response || response.cost_mode !== 'gold' || typeof budget !== 'number' || !Number.isInteger(budget) || budget < 1) return []
-  const caps = Array.from({ length: Math.min(budget, 20) }, (_, index) => index + 1)
-  if (budget > 20) caps.push(budget)
-  const plans = [response.current, response.best, ...(response.pareto_frontier ?? [])]
-    .filter((plan): plan is Plan => Boolean(plan?.feasible && typeof plan.total_dps === 'number' && typeof plan.cost === 'number'))
-
-  return caps.map((cap) => {
-    const candidates = plans.filter((plan) => typeof plan.cost === 'number' && plan.cost <= cap)
-    const plan = candidates.reduce<Plan | null>((best, candidate) => {
-      if (!best) return candidate
-      const candidateDps = typeof candidate.total_dps === 'number' ? candidate.total_dps : Number.NEGATIVE_INFINITY
-      const bestDps = typeof best.total_dps === 'number' ? best.total_dps : Number.NEGATIVE_INFINITY
-      if (candidateDps !== bestDps) return candidateDps > bestDps ? candidate : best
-      const candidateCost = typeof candidate.cost === 'number' ? candidate.cost : Number.POSITIVE_INFINITY
-      const bestCost = typeof best.cost === 'number' ? best.cost : Number.POSITIVE_INFINITY
-      return candidateCost < bestCost ? candidate : best
-    }, null)
-    return { budget: cap, plan }
-  })
-})
-
 onMounted(async () => {
   saveLocal(STORAGE_SETTINGS, settings)
   if (loadedAccount.migrated) {
@@ -854,6 +848,7 @@ onMounted(async () => {
             </div>
             <div class="heading-actions">
               <button class="button ghost" type="button" :aria-expanded="assetsExpanded" aria-controls="character-assets" @click="assetsExpanded = !assetsExpanded">{{ assetsExpanded ? '收起角色资产 ▴' : '展开角色资产 ▾' }}</button>
+              <button class="button secondary" type="button" :disabled="busy || loadingExampleAccount" title="将当前角色与专武资产替换为示例配置" @click="useExampleAccount">{{ loadingExampleAccount ? '正在载入示例…' : '使用示例配置' }}</button>
               <button class="button ghost" type="button" :disabled="busy" @click="loadExample">运行演示优化</button>
               <button class="button ghost" type="button" @click="chooseJsonImport">导入私人账号 JSON</button>
               <button class="button ghost" type="button" @click="exportAccount">导出 JSON</button>
@@ -884,7 +879,7 @@ onMounted(async () => {
                 </div>
                 <small class="signature-hint">{{ signatureHint(row.character) }}</small>
               </div>
-              <p v-if="!visibleCharacters.length" class="empty-inline">尚未录入五星或限定角色。可手工添加、导入私人账号 JSON 或载入演示。</p>
+              <p v-if="!visibleCharacters.length" class="empty-inline">尚未录入五星或限定角色。可手工添加、导入私人账号 JSON 或使用示例配置。</p>
             </div>
           </div>
         </section>
@@ -945,12 +940,13 @@ onMounted(async () => {
           <p class="section-kicker">本次计算</p>
           <h2>条件与资产概览</h2>
           <dl class="run-summary"><div><dt>模式</dt><dd>{{ modeDescription }}</dd></div><div><dt>预算</dt><dd>{{ settings.cost_mode === 'gold' ? `${number(settings.budget, 0)} 金` : `${number(settings.budget, 2)} 抽` }}</dd></div><div><dt>已录角色</dt><dd>{{ account.characters.length }} 名</dd></div><div><dt>已录专武</dt><dd>{{ account.characters.filter((row) => row.signature_refinement > 0).length }} 把</dd></div></dl>
-          <p class="run-note"><strong>简化资产模式：</strong>表内常驻武器按每队精1可用；专武按已录入值计算。漂泊者形态需手动录入对应形态和链数，不能通过抽卡补足。普通表沿用全队列，条件表采用全队0层；DPS 不进行单位乘法。</p>
+          <p class="run-note"><strong>简化资产模式：</strong>表内常驻武器按每队精1可用；专武按已录入值计算。漂泊者形态需手动录入对应形态和链数，不能通过抽卡补足。</p>
           <button class="text-button reset" type="button" @click="clearLocal">清除本机账号与偏好</button>
         </section>
 
         <section v-if="result" class="panel result-panel">
           <div class="panel-heading"><div><p class="section-kicker">计算结果</p><h2>当前与推荐方案</h2></div><span class="exact-badge" :class="result.exact === false ? 'approximate' : ''">{{ result.exact === false ? '近似搜索' : '精确搜索' }}</span></div>
+          <p v-if="resultSettings" class="muted">本次结果条件：{{ MODES.find(([mode]) => mode === resultSettings?.mode)?.[1] }} · 预算 {{ formatPlanCost(resultSettings.budget, resultSettings.cost_mode) }} · 难度 {{ resultSettings.allowed_difficulties?.join(' / ') ?? `≤ ${resultSettings.max_difficulty}` }}</p>
           <div class="score-grid">
             <article><span>当前总 DPS</span><strong>{{ result.current.feasible ? dpsNumber(result.current.total_dps, 0) : '不可成立' }}</strong></article>
             <article class="featured"><span>最佳总 DPS</span><strong>{{ result.best.feasible ? dpsNumber(result.best.total_dps, 0) : '预算内无解' }}</strong></article>
@@ -967,7 +963,6 @@ onMounted(async () => {
       <section class="panel result-detail">
         <div class="panel-heading"><div><p class="section-kicker">当前阵容</p><h2>当前可成立队伍</h2></div></div>
         <TeamTable :teams="planTeams(result.current)" />
-        <p class="muted">{{ dpsUnitNote }}</p>
         <div v-if="planSourceRows(result.current).length" class="action-list">
           <h3>原图映射出处</h3>
           <ul class="rankings">
@@ -976,30 +971,52 @@ onMounted(async () => {
         </div>
       </section>
       <section class="panel result-detail">
-        <div class="panel-heading"><div><p class="section-kicker">推荐路径</p><h2>补金后的最优队伍</h2></div></div>
+        <div class="panel-heading"><div><p class="section-kicker">推荐路径</p><h2>逐金补金顺序与收益</h2></div></div>
+        <div v-if="upgradeSummary" class="upgrade-summary">
+          <h3>补金汇总</h3>
+          <p class="upgrade-summary-order"><strong>总补金顺序：</strong>{{ upgradeSummary.order }}</p>
+          <div class="metrics">
+            <div><span>总 DPS 提升</span><b>{{ signedDps(upgradeSummary.gain) }}</b></div>
+            <div><span>平均每金 DPS 提升</span><b>{{ signedDps(upgradeSummary.averageGain, 2) }}</b></div>
+            <div><span>总提升率</span><b>{{ percent(upgradeSummary.gainPercent) }}</b></div>
+            <div><span>实际补金数量</span><b>{{ upgradeSummary.goldCount }} 金</b></div>
+          </div>
+          <p class="muted">平均每金 DPS 提升 = 总 DPS 提升 ÷ 实际补金数量；总提升率相对补金前的最优总 DPS。<template v-if="!result.current.feasible">补金前完整队伍不可成立，收益比较显示为 —。</template></p>
+        </div>
+        <template v-if="result.upgrade_path?.length">
+          <p class="muted">优先保证目标预算内最终 DPS 最优，再依次最大化每金后的 DPS。提升率相较上一金后的最优总 DPS；零提升步骤是后续升级的前置投入。</p>
+          <div class="scroll-table">
+            <table class="upgrade-path-table">
+              <thead><tr><th>补金顺序</th><th>补在哪里</th><th>补完后总 DPS</th><th>该金 DPS 提升</th><th>该金提升率</th><th>累计投入</th><th>补完后的最优队伍 / 每队 DPS</th></tr></thead>
+              <tbody>
+                <tr v-for="step in result.upgrade_path" :key="step.gold">
+                  <td>第 {{ step.gold }} 金</td>
+                  <td>{{ actionText(step.action) }}</td>
+                  <td>{{ step.feasible ? dpsNumber(step.total_dps) : '完整队伍尚不可成立' }}</td>
+                  <td>{{ signedDps(step.gain) }}</td>
+                  <td>{{ percent(step.gain_percent) }}</td>
+                  <td>{{ formatPlanCost(step.cumulative_cost) }}</td>
+                  <td><div v-for="(team, index) in step.teams" :key="index">队伍 {{ index + 1 }}：{{ team.members.map((member) => member.character).join(' + ') }} · DPS {{ dpsNumber(team.dps) }}</div><span v-if="!step.feasible">—</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p v-if="!result.current.feasible" class="muted">完整队伍首次成立前没有可比较的总 DPS 基准，提升率显示为 —。</p>
+        </template>
+        <p v-else-if="result.best.feasible" class="muted">当前资产已达到本次预算内的最优 DPS，无需补金。</p>
+        <h3 class="final-team-heading">目标预算内补金后的最优队伍</h3>
+        <p v-if="result.best.feasible" class="muted">共补 {{ result.upgrade_path?.length ?? 0 }} 金，投入 {{ formatPlanCost(result.best.cost) }}，最优总 DPS {{ dpsNumber(result.best.total_dps) }}。</p>
         <TeamTable :teams="planTeams(result.best)" />
-        <p class="muted">{{ dpsUnitNote }}</p>
         <div v-if="planSourceRows(result.best).length" class="action-list">
           <h3>原图映射出处</h3>
           <ul class="rankings">
             <li v-for="item in planSourceRows(result.best)" :key="item.recordId"><strong>{{ item.title ?? item.recordId }}</strong><span>配置：{{ item.label ?? '未提供配置标签' }}<template v-if="sourceRowText(item)"> · {{ sourceRowText(item) }}</template></span></li>
           </ul>
         </div>
-        <div v-if="result.best.actions?.length" class="action-list"><h3>建议补金顺序</h3><ol><li v-for="(action, index) in result.best.actions" :key="index">{{ actionText(action) }}</li></ol></div>
-        <p v-else-if="result.best.feasible" class="muted">当前资产已是本次条件下的最优方案，或后端未返回补金动作。</p>
       </section>
-      <section v-if="result.pareto_frontier?.length" class="panel result-detail">
-        <div class="panel-heading"><div><p class="section-kicker">备选</p><h2>Pareto 前沿</h2></div></div>
-        <div class="scroll-table"><table><thead><tr><th>方案</th><th>{{ resultCostLabel }}</th><th>总 DPS</th><th>DPS 提升</th><th>{{ resultRoiLabel }}</th></tr></thead><tbody><tr v-for="(plan, index) in result.pareto_frontier" :key="index"><td>#{{ index + 1 }}</td><td>{{ formatPlanCost(plan.cost) }}</td><td>{{ dpsNumber(plan.total_dps, 0) }}</td><td>{{ signedDps(plan.gain, 0) }}</td><td>{{ dpsNumber(planRoi(plan), 1) }}</td></tr></tbody></table></div>
-      </section>
-      <section v-if="goldBudgetComparison.length" class="panel result-detail">
-        <div class="panel-heading"><div><p class="section-kicker">补金对照</p><h2>各补金数量的队伍提升建议</h2></div></div>
-        <p class="muted">由本次已精确搜索到的 Pareto 前沿生成，不会额外请求接口。展示 1 至 {{ Math.min(resultBudget ?? 0, 20) }} 金<template v-if="(resultBudget ?? 0) > 20">，并附本次 {{ resultBudget }} 金预算的结果</template>。</p>
-        <div class="scroll-table"><table class="gold-budget-table"><thead><tr><th>可用补金</th><th>推荐总 DPS</th><th>DPS 提升</th><th>实际使用</th><th>每金 DPS 收益</th><th>推荐队伍</th><th>建议路径</th></tr></thead><tbody><tr v-for="row in goldBudgetComparison" :key="row.budget"><td>{{ row.budget }} 金</td><td>{{ row.plan ? dpsNumber(row.plan.total_dps, 0) : '—' }}</td><td>{{ row.plan ? signedDps(row.plan.gain, 0) : '—' }}</td><td>{{ row.plan ? formatPlanCost(row.plan.cost, 'gold') : '—' }}</td><td>{{ row.plan ? dpsNumber(planRoi(row.plan, 'gold'), 2) : '—' }}</td><td>{{ row.plan ? planTeams(row.plan).map((team) => team.members.map((member) => member.character).join(' + ')).join('；') : '—' }}</td><td>{{ row.plan ? planActionSummary(row.plan) : '当前资产无法组成目标队伍' }}</td></tr></tbody></table></div>
-      </section>
-      <section v-if="result.upgrade_rankings?.length" class="panel result-detail">
+      <section v-if="positiveUpgradeRankings.length" class="panel result-detail">
         <div class="panel-heading"><div><p class="section-kicker">候选分析</p><h2>升级收益排行</h2></div></div>
-        <ol class="rankings"><li v-for="(item, index) in result.upgrade_rankings" :key="index"><strong>{{ rankingActionText(item) }}</strong><span>{{ rankingStats(item) }}</span></li></ol>
+        <ol class="rankings"><li v-for="(item, index) in positiveUpgradeRankings" :key="index"><strong>{{ rankingActionText(item) }}</strong><span>{{ rankingStats(item) }}</span></li></ol>
       </section>
       <details class="panel raw-result"><summary>查看原始优化响应（调试）</summary><pre>{{ JSON.stringify(result, null, 2) }}</pre></details>
     </section>

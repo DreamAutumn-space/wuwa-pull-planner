@@ -41,6 +41,10 @@ export function getExample(): Promise<{ account: Account; database?: Database; s
   return request('/api/example')
 }
 
+export function getExampleAccount(): Promise<Account> {
+  return request('/api/example-account', { cache: 'no-store' })
+}
+
 export function optimize(payload: OptimizeRequest): Promise<OptimizeResponse> {
   return request('/api/optimize', {
     method: 'POST',
